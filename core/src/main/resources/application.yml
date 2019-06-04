@@ -6,3 +6,6 @@ logging:
 
 gemini:
   port: 8889
+  biz-thread-pool:
+    core-pool-size: 8
+    maximum-pool-size: 16

@@ -1,6 +1,7 @@
 package io.gemini.core.processor;
 
 import com.google.common.base.Throwables;
+import io.gemini.common.contants.Constants;
 import io.gemini.core.processor.task.MessageTask;
 import io.gemini.transport.channel.JChannel;
 import io.gemini.transport.payload.JMessagePayload;
@@ -9,7 +10,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * gemini
@@ -22,10 +25,19 @@ import java.util.concurrent.Executors;
 @Service
 public class DefaultMessageProcessor implements MessageProcessor {
 
+
     private final ExecutorService executor;
 
+    // 合理控制业务线程池数量
     public DefaultMessageProcessor() {
-        this(Executors.newCachedThreadPool());
+        this(new ThreadPoolExecutor(
+                Constants.AVAILABLE_PROCESSORS << 1,
+                Constants.AVAILABLE_PROCESSORS << 2,
+                60L,
+                TimeUnit.SECONDS,
+                new LinkedBlockingQueue<>(),
+                new ThreadPoolExecutor.CallerRunsPolicy())// IO线程执行任务策略
+        );
     }
 
     public DefaultMessageProcessor(ExecutorService executor) {
