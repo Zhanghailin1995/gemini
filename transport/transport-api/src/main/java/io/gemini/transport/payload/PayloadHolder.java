@@ -12,10 +12,24 @@ import io.gemini.serialization.io.OutputBuf;
 public class PayloadHolder {
 
     private byte serializerCode;
+    private byte messageCode; // 消息类型，给后方业务做判断使用
 
     private byte[] bytes;
     private InputBuf inputBuf;
     private OutputBuf outputBuf;
+
+
+    PayloadHolder(byte messageCode) {
+        this.messageCode = messageCode;
+    }
+
+    public byte messageCode() {
+        return messageCode;
+    }
+
+    public void messageCode(byte messageCode) {
+        this.messageCode = messageCode;
+    }
 
     public byte serializerCode() {
         return serializerCode;

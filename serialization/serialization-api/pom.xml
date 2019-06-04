@@ -12,5 +12,12 @@
     <artifactId>gemini-serialization-api</artifactId>
     <packaging>jar</packaging>
 
+    <dependencies>
+        <dependency>
+            <groupId>io.gemini</groupId>
+            <artifactId>gemini-common</artifactId>
+        </dependency>
+    </dependencies>
+
 
 </project>

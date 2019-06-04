@@ -1,13 +1,11 @@
 package io.gemini.core.acceptor;
 
 import io.gemini.common.util.Requires;
+import io.gemini.transport.CodecConfig;
 import io.gemini.transport.JConfig;
 import io.gemini.transport.JOption;
 import io.gemini.transport.netty.NettyTcpAcceptor;
-import io.gemini.transport.netty.handler.AcceptorHandler;
-import io.gemini.transport.netty.handler.AcceptorIdleStateTrigger;
-import io.gemini.transport.netty.handler.LowCopyProtocolDecoder;
-import io.gemini.transport.netty.handler.LowCopyProtocolEncoder;
+import io.gemini.transport.netty.handler.*;
 import io.gemini.transport.processor.MessageProcessor;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
@@ -70,7 +68,8 @@ public class SimpleNettyTcpAcceptor extends NettyTcpAcceptor {
 
     // handlers
     private final AcceptorIdleStateTrigger idleStateTrigger = new AcceptorIdleStateTrigger();
-    private final ChannelOutboundHandler encoder = new LowCopyProtocolEncoder();
+    private final ChannelOutboundHandler encoder =
+            CodecConfig.isCodecLowCopy() ? new LowCopyProtocolEncoder() : new ProtocolEncoder();
     private final AcceptorHandler handler = new AcceptorHandler();
 
     public SimpleNettyTcpAcceptor() {
@@ -137,7 +136,7 @@ public class SimpleNettyTcpAcceptor extends NettyTcpAcceptor {
                 ch.pipeline().addLast(
                         new IdleStateHandler(45, 0, 0, TimeUnit.SECONDS),
                         idleStateTrigger,
-                        new LowCopyProtocolDecoder(),
+                        CodecConfig.isCodecLowCopy() ? new LowCopyProtocolDecoder() : new ProtocolDecoder(),
                         encoder,
                         handler);
             }

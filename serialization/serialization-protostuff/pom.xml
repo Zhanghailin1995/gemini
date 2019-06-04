@@ -15,10 +15,6 @@
     <dependencies>
         <dependency>
             <groupId>io.gemini</groupId>
-            <artifactId>gemini-common</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.gemini</groupId>
             <artifactId>gemini-serialization-api</artifactId>
         </dependency>
         <dependency>

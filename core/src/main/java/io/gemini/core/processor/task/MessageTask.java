@@ -1,6 +1,10 @@
 package io.gemini.core.processor.task;
 
 import io.gemini.core.processor.DefaultMessageProcessor;
+import io.gemini.serialization.Serializer;
+import io.gemini.serialization.SerializerFactory;
+import io.gemini.serialization.SerializerType;
+import io.gemini.transport.CodecConfig;
 import io.gemini.transport.channel.JChannel;
 import io.gemini.transport.payload.JMessagePayload;
 
@@ -26,6 +30,30 @@ public class MessageTask implements Runnable {
 
     @Override
     public void run() {
+
+        // stack copy
+        final DefaultMessageProcessor _processor = processor;
+        final JMessagePayload _message = message;
+
+        byte serializerCode = _message.serializerCode();
+        byte messageCode = _message.messageCode();
+
+        // 是否浅拷贝
+        boolean lowCopy = CodecConfig.isCodecLowCopy();
+        // protobuf 自己根据生成的类反序列化，不提供工具类
+        if (serializerCode == SerializerType.PROTOBUF.value()) {
+            if (lowCopy) {
+
+            } else {
+
+            }
+        } else {
+            Serializer serializer = SerializerFactory.getSerializer(serializerCode);
+            if (lowCopy) {
+
+            }
+        }
+
 
     }
 }
