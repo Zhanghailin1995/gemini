@@ -53,6 +53,8 @@
         <spring-cloud.version>Finchley.SR3</spring-cloud.version>
         <mybatis-plus-boot-starter.version>3.1.1</mybatis-plus-boot-starter.version>
         <disruptor.version>3.3.11</disruptor.version>
+        <protostuff.version>1.6.0</protostuff.version>
+        <objenesis.version>2.1</objenesis.version>
     </properties>
 
     <dependencyManagement>
@@ -160,6 +162,23 @@
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>18.0</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.protostuff</groupId>
+                <artifactId>protostuff-core</artifactId>
+                <version>${protostuff.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.protostuff</groupId>
+                <artifactId>protostuff-runtime</artifactId>
+                <version>${protostuff.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.objenesis</groupId>
+                <artifactId>objenesis</artifactId>
+                <version>${objenesis.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
