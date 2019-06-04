@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: Gemini-core
+logging:
+  config: classpath:log4j2.xml
+
+gemini:
+  port: 8889

@@ -1,0 +1,12 @@
+# EnvironmentPostProcessor
+org.springframework.boot.env.EnvironmentPostProcessor=\
+io.gemini.core.env.GeminiDefaultPropertySourceEnvironmentPostProcessor
+
+
+# SpringApplicationRunListener
+org.springframework.boot.SpringApplicationRunListener=\
+io.gemini.core.listener.StartingSpringApplicationRunListener
+
+# Auto Configure
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+io.gemini.core.autoconfigure.GeminiAutoConfiguration

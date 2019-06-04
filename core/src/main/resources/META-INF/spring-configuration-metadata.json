@@ -1,0 +1,19 @@
+{
+  "groups": [
+    {
+      "name": "gemini",
+      "type": "io.gemini.core.autoconfigure.GeminiAutoConfiguration",
+      "sourceType": "io.gemini.core.autoconfigure.property.GeminiProperties"
+    }
+  ],
+  "properties": [
+    {
+      "name": "gemini.port",
+      "type": "java.lang.Integer",
+      "description": "tcp connect port.",
+      "sourceType": "io.gemini.core.autoconfigure.property.GeminiProperties",
+      "defaultValue": 8989
+    }
+  ],
+  "hints": []
+}
