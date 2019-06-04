@@ -15,7 +15,8 @@
  */
 package io.gemini.common.util.internal;
 
-import org.jupiter.common.util.ThrowUtil;
+
+import io.gemini.common.util.ThrowUtil;
 
 /**
  * jupiter
