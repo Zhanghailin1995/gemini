@@ -15,15 +15,15 @@
  */
 package io.gemini.core.executor;
 
+import java.util.concurrent.Executor;
+
 /**
  * jupiter
  * org.jupiter.rpc.executor
  *
  * @author jiachun.fjc
  */
-public interface CloseableExecutor {
-
-    void execute(Runnable task);
+public interface CloseableExecutor extends Executor {
 
     void shutdown();
 }

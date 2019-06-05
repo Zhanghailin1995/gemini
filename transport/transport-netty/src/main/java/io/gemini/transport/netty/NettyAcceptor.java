@@ -118,6 +118,7 @@ public abstract class NettyAcceptor implements JAcceptor {
         boss.shutdownGracefully().syncUninterruptibly();
         worker.shutdownGracefully().syncUninterruptibly();
         timer.stop();
+        processor.shutdown();
     }
 
     protected void setOptions() {
