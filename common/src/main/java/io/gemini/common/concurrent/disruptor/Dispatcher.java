@@ -15,7 +15,7 @@
  */
 package io.gemini.common.concurrent.disruptor;
 
-import org.jupiter.common.util.JConstants;
+import io.gemini.common.contants.Constants;
 
 /**
  * Task message dispatcher.
@@ -28,7 +28,7 @@ import org.jupiter.common.util.JConstants;
 public interface Dispatcher<T> {
 
     int BUFFER_SIZE = 32768;
-    int MAX_NUM_WORKERS = JConstants.AVAILABLE_PROCESSORS << 3;
+    int MAX_NUM_WORKERS = Constants.AVAILABLE_PROCESSORS << 3;
 
     /**
      * Dispatch a task message.
