@@ -1,5 +1,6 @@
 package io.gemini.core.processor.task;
 
+import io.gemini.common.concurrent.RejectedRunnable;
 import io.gemini.core.processor.DefaultMessageProcessor;
 import io.gemini.serialization.Serializer;
 import io.gemini.serialization.SerializerFactory;
@@ -14,7 +15,7 @@ import io.gemini.transport.payload.JMessagePayload;
  *
  * @author zhanghailin
  */
-public class MessageTask implements Runnable {
+public class MessageTask implements RejectedRunnable {
 
     // 可能会有很多的参数
 
@@ -55,5 +56,10 @@ public class MessageTask implements Runnable {
         }
 
 
+    }
+
+    @Override
+    public void rejected() {
+        // TODO 任务被拒绝执行
     }
 }

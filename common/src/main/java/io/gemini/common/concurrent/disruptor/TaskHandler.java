@@ -19,12 +19,12 @@ import com.lmax.disruptor.EventHandler;
 import com.lmax.disruptor.LifecycleAware;
 import com.lmax.disruptor.TimeoutHandler;
 import com.lmax.disruptor.WorkHandler;
-import org.jupiter.common.util.internal.logging.InternalLogger;
-import org.jupiter.common.util.internal.logging.InternalLoggerFactory;
+import io.gemini.common.util.internal.logging.InternalLogger;
+import io.gemini.common.util.internal.logging.InternalLoggerFactory;
 
 /**
  * Callback interface to be implemented for processing events as they become available in the RingBuffer.
- *
+ * <p>
  * jupiter
  * org.jupiter.common.concurrent.disruptor
  *

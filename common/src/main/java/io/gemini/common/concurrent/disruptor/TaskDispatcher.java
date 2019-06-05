@@ -18,8 +18,11 @@ package io.gemini.common.concurrent.disruptor;
 import com.lmax.disruptor.*;
 import com.lmax.disruptor.dsl.Disruptor;
 import com.lmax.disruptor.dsl.ProducerType;
+import io.gemini.common.concurrent.RejectedTaskPolicyWithReport;
 import io.gemini.common.util.Pow2;
 import io.gemini.common.util.Requires;
+import io.gemini.common.util.internal.logging.InternalLogger;
+import io.gemini.common.util.internal.logging.InternalLoggerFactory;
 
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -65,10 +68,12 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class TaskDispatcher implements Dispatcher<Runnable>, Executor {
 
+    private static final InternalLogger logger = InternalLoggerFactory.getInstance(TaskDispatcher.class);
+
     private static final EventFactory<MessageEvent<Runnable>> eventFactory = MessageEvent::new;
 
     private final Disruptor<MessageEvent<Runnable>> disruptor;
-    private ExecutorService reserveExecutor;
+    private final ExecutorService reserveExecutor;
 
     public TaskDispatcher(int numWorkers, ThreadFactory threadFactory) {
         this(numWorkers, threadFactory, BUFFER_SIZE, 0, WaitStrategyType.BLOCKING_WAIT, null);
@@ -86,12 +91,12 @@ public class TaskDispatcher implements Dispatcher<Runnable>, Executor {
             bufSize = Pow2.roundToPowerOfTwo(bufSize);
         }
 
-        /*if (numReserveWorkers > 0) {
+        if (numReserveWorkers > 0) {
             String name = "reserve.processor";
 
             RejectedExecutionHandler handler;
             if (dumpPrefixName == null) {
-                handler = new ThreadPoolExecutor.CallerRunsPolicy();
+                handler = new RejectedTaskPolicyWithReport(name);
             } else {
                 handler = new RejectedTaskPolicyWithReport(name, dumpPrefixName);
             }
@@ -106,7 +111,7 @@ public class TaskDispatcher implements Dispatcher<Runnable>, Executor {
                     handler);
         } else {
             reserveExecutor = null;
-        }*/
+        }
 
 
         WaitStrategy waitStrategy;
@@ -181,6 +186,7 @@ public class TaskDispatcher implements Dispatcher<Runnable>, Executor {
     @Override
     public void execute(Runnable message) {
         if (!dispatch(message)) {
+            logger.error("Disruptor dispatch message task unsuccessfully,try to commit message task to alternative ThreadPoolExecutor.");
             // 备选线程池
             if (reserveExecutor != null) {
                 reserveExecutor.execute(message);
