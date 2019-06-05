@@ -1,18 +1,14 @@
 package io.gemini.core.processor;
 
 import com.google.common.base.Throwables;
-import io.gemini.common.contants.Constants;
+import io.gemini.core.executor.CloseableExecutor;
 import io.gemini.core.processor.task.MessageTask;
+import io.gemini.core.processor.task.MessageExecutors;
 import io.gemini.transport.channel.JChannel;
 import io.gemini.transport.payload.JMessagePayload;
 import io.gemini.transport.processor.MessageProcessor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 /**
  * gemini
@@ -26,21 +22,14 @@ import java.util.concurrent.TimeUnit;
 public class DefaultMessageProcessor implements MessageProcessor {
 
 
-    private final ExecutorService executor;
+    private final CloseableExecutor executor;
 
-    // 合理控制业务线程池数量
+
     public DefaultMessageProcessor() {
-        this(new ThreadPoolExecutor(
-                Constants.AVAILABLE_PROCESSORS << 1,
-                Constants.AVAILABLE_PROCESSORS << 2,
-                60L,
-                TimeUnit.SECONDS,
-                new LinkedBlockingQueue<>(),
-                new ThreadPoolExecutor.CallerRunsPolicy())// IO线程执行任务策略
-        );
+        this(MessageExecutors.executor());
     }
 
-    public DefaultMessageProcessor(ExecutorService executor) {
+    public DefaultMessageProcessor(CloseableExecutor executor) {
         this.executor = executor;
     }
 

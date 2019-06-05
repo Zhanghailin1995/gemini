@@ -18,6 +18,7 @@ package io.gemini.common.concurrent.disruptor;
 import com.lmax.disruptor.*;
 import com.lmax.disruptor.dsl.Disruptor;
 import com.lmax.disruptor.dsl.ProducerType;
+import io.gemini.common.concurrent.DefaultThreadFactory;
 import io.gemini.common.concurrent.RejectedTaskPolicyWithReport;
 import io.gemini.common.util.Pow2;
 import io.gemini.common.util.Requires;
@@ -25,7 +26,6 @@ import io.gemini.common.util.internal.logging.InternalLogger;
 import io.gemini.common.util.internal.logging.InternalLoggerFactory;
 
 import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 可选择的等待策略, 越往下越极端:
@@ -204,33 +204,4 @@ public class TaskDispatcher implements Dispatcher<Runnable>, Executor {
         }
     }
 
-    /**
-     * The default thread factory
-     */
-    static class DefaultThreadFactory implements ThreadFactory {
-        private static final AtomicInteger poolNumber = new AtomicInteger(1);
-        private final ThreadGroup group;
-        private final AtomicInteger threadNumber = new AtomicInteger(1);
-        private final String namePrefix;
-
-        DefaultThreadFactory(String name) {
-            SecurityManager s = System.getSecurityManager();
-            group = (s != null) ? s.getThreadGroup() :
-                    Thread.currentThread().getThreadGroup();
-            namePrefix = name+"-" +
-                    poolNumber.getAndIncrement() +
-                    "-thread-";
-        }
-
-        public Thread newThread(Runnable r) {
-            Thread t = new Thread(group, r,
-                    namePrefix + threadNumber.getAndIncrement(),
-                    0);
-            if (t.isDaemon())
-                t.setDaemon(false);
-            if (t.getPriority() != Thread.NORM_PRIORITY)
-                t.setPriority(Thread.NORM_PRIORITY);
-            return t;
-        }
-    }
 }
