@@ -18,6 +18,9 @@ public class PayloadHolder {
     private InputBuf inputBuf;
     private OutputBuf outputBuf;
 
+    PayloadHolder() {
+
+    }
 
     PayloadHolder(byte messageCode) {
         this.messageCode = messageCode;

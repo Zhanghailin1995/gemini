@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
  */
 @Data
 @NoArgsConstructor
+@Deprecated
 public class BizThreadPool {
 
     private int corePoolSize;

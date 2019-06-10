@@ -2,13 +2,12 @@ package io.gemini.core.processor;
 
 import com.google.common.base.Throwables;
 import io.gemini.core.executor.CloseableExecutor;
-import io.gemini.core.processor.task.MessageTask;
 import io.gemini.core.processor.task.MessageExecutors;
+import io.gemini.core.processor.task.MessageTask;
 import io.gemini.transport.channel.JChannel;
 import io.gemini.transport.payload.JMessagePayload;
 import io.gemini.transport.processor.MessageProcessor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 
 /**
  * gemini
@@ -18,7 +17,6 @@ import org.springframework.stereotype.Service;
  * @author zhanghailin
  */
 @Slf4j
-@Service
 public class DefaultMessageProcessor implements MessageProcessor {
 
 
