@@ -13,6 +13,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>registry-api</module>
+        <module>registry-zookeeper</module>
     </modules>
 
 

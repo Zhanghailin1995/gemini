@@ -1,5 +1,7 @@
 package io.gemini.registry;
 
+import java.util.Collection;
+
 /**
  * gemini
  * io.gemini.registry.RegistryService
@@ -18,6 +20,11 @@ public interface RegistryService extends Registry {
      * Unregister service to registry server.
      */
     void unregister(RegisterMeta meta);
+
+    /**
+     * Find a service in the local scope.
+     */
+    Collection<RegisterMeta> lookup(RegisterMeta.ServiceMeta serviceMeta);
 
     /**
      * Shutdown.

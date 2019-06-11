@@ -1,0 +1,207 @@
+package io.gemini.registry.zookeeper;
+
+import com.google.common.base.Throwables;
+import com.google.common.collect.Lists;
+import io.gemini.common.util.NetUtil;
+import io.gemini.common.util.SystemPropertyUtil;
+import io.gemini.common.util.internal.logging.InternalLogger;
+import io.gemini.common.util.internal.logging.InternalLoggerFactory;
+import io.gemini.registry.AbstractRegistryService;
+import io.gemini.registry.RegisterMeta;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.curator.framework.CuratorFramework;
+import org.apache.curator.framework.api.BackgroundCallback;
+import org.apache.curator.framework.api.CuratorEvent;
+import org.apache.zookeeper.CreateMode;
+import org.apache.zookeeper.KeeperException;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
+
+/**
+ * gemini
+ * io.gemini.registry.zookeeper.ZookeeperRegistryService
+ *
+ * @author zhanghailin
+ */
+public class ZookeeperRegistryService extends AbstractRegistryService {
+
+    private static final InternalLogger logger = InternalLoggerFactory.getInstance(ZookeeperRegistryService.class);
+
+    // 没有实际意义, 不要在意它
+    private static final AtomicLong sequence = new AtomicLong(0);
+
+    private final String address = SystemPropertyUtil.get("io.gemini.local.address", NetUtil.getLocalAddress());
+
+    private final int sessionTimeoutMs = SystemPropertyUtil.getInt("io.gemini.registry.zookeeper.sessionTimeoutMs", 60 * 1000);
+    private final int connectionTimeoutMs = SystemPropertyUtil.getInt("io.gemini.registry.zookeeper.connectionTimeoutMs", 15 * 1000);
+
+    // 指定节点都提供了哪些服务
+
+    private CuratorFramework configClient;
+
+    @Override
+    public Collection<RegisterMeta> lookup(RegisterMeta.ServiceMeta serviceMeta) {
+        String directory = String.format("/gemini/server/%s/%s/%s",
+                serviceMeta.getGroup(),
+                serviceMeta.getServiceProviderName(),
+                serviceMeta.getVersion());
+
+        List<RegisterMeta> registerMetaList = Lists.newArrayList();
+        try {
+            List<String> paths = configClient.getChildren().forPath(directory);
+            for (String p : paths) {
+                registerMetaList.add(parseRegisterMeta(String.format("%s/%s", directory, p)));
+            }
+        } catch (Exception e) {
+            if (logger.isWarnEnabled()) {
+                logger.warn("Lookup service meta: {} path failed, {}.", serviceMeta, Throwables.getStackTraceAsString(e));
+            }
+        }
+        return registerMetaList;
+    }
+
+    @Override
+    public void destroy() {
+
+    }
+
+    @Override
+    protected void doRegister(final RegisterMeta meta) {
+        String directory = String.format("/gemini/server/%s/%s/%s",
+                meta.getGroup(),
+                meta.getServiceProviderName(),
+                meta.getVersion());
+
+        try {
+            // 服务是永久节点
+            if (configClient.checkExists().forPath(directory) == null) {
+                configClient.create().creatingParentsIfNeeded().forPath(directory);
+            }
+        } catch (Exception e) {
+            if (logger.isWarnEnabled()) {
+                logger.warn("Create parent path failed, directory: {}, {}.", directory, Throwables.getStackTraceAsString(e));
+            }
+        }
+
+        try {
+            meta.setHost(address);
+
+            // The znode will be deleted upon the client's disconnect.
+            configClient.create().withMode(CreateMode.EPHEMERAL).inBackground((client, event) -> {
+                if (event.getResultCode() == KeeperException.Code.OK.intValue()) {
+                    getRegisterMetaMap().put(meta, RegisterState.DONE);
+                }
+
+                logger.info("Register: {} - {}.", meta, event);
+            }).forPath(
+                    String.format("%s/%s:%s:%s:%s",
+                            directory,
+                            meta.getHost(),
+                            String.valueOf(meta.getPort()),
+                            String.valueOf(meta.getWeight()),
+                            String.valueOf(meta.getConnCount())));
+        } catch (Exception e) {
+            if (logger.isWarnEnabled()) {
+                logger.warn("Create register meta: {} path failed, {}.", meta, Throwables.getStackTraceAsString(e));
+            }
+        }
+
+
+    }
+
+    @Override
+    protected void doUnregister(RegisterMeta meta) {
+        String directory = String.format("/gemini/server/%s/%s/%s",
+                meta.getGroup(),
+                meta.getServiceProviderName(),
+                meta.getVersion());
+
+        try {
+            if (configClient.checkExists().forPath(directory) == null) {
+                return;
+            }
+        } catch (Exception e) {
+            if (logger.isWarnEnabled()) {
+                logger.warn("Check exists with parent path failed, directory: {}, {}.", directory, Throwables.getStackTraceAsString(e));
+            }
+        }
+
+        try {
+            meta.setHost(address);
+
+            configClient.delete().inBackground(new BackgroundCallback() {
+
+                @Override
+                public void processResult(CuratorFramework client, CuratorEvent event) throws Exception {
+                    logger.info("Unregister: {} - {}.", meta, event);
+                }
+            }).forPath(
+                    String.format("%s/%s:%s:%s:%s",
+                            directory,
+                            meta.getHost(),
+                            String.valueOf(meta.getPort()),
+                            String.valueOf(meta.getWeight()),
+                            String.valueOf(meta.getConnCount())));
+        } catch (Exception e) {
+            if (logger.isWarnEnabled()) {
+                logger.warn("Delete register meta: {} path failed, {}.", meta, Throwables.getStackTraceAsString(e));
+            }
+        }
+    }
+
+    @Override
+    protected void doCheckRegisterNodeStatus() {
+        for (Map.Entry<RegisterMeta, RegisterState> entry : getRegisterMetaMap().entrySet()) {
+            if (entry.getValue() == RegisterState.DONE) {
+                continue;
+            }
+
+            RegisterMeta meta = entry.getKey();
+            String directory = String.format("/gemini/server/%s/%s/%s",
+                    meta.getGroup(),
+                    meta.getServiceProviderName(),
+                    meta.getVersion());
+
+            String nodePath = String.format("%s/%s:%s:%s:%s",
+                    directory,
+                    meta.getHost(),
+                    String.valueOf(meta.getPort()),
+                    String.valueOf(meta.getWeight()),
+                    String.valueOf(meta.getConnCount()));
+
+            try {
+                if (configClient.checkExists().forPath(nodePath) == null) {
+                    super.register(meta);
+                }
+            } catch (Exception e) {
+                if (logger.isWarnEnabled()) {
+                    logger.warn("Check register status, meta: {} path failed, {}.", meta, Throwables.getStackTraceAsString(e));
+                }
+            }
+        }
+    }
+
+    @Override
+    public void connectToRegistryServer(String connectString) {
+
+    }
+
+    private RegisterMeta parseRegisterMeta(String data) {
+        String[] array_0 = StringUtils.split(data, '/');
+        RegisterMeta meta = new RegisterMeta();
+        meta.setGroup(array_0[2]);
+        meta.setServiceProviderName(array_0[3]);
+        meta.setVersion(array_0[4]);
+
+        String[] array_1 = StringUtils.split(array_0[5], ':');
+        meta.setHost(array_1[0]);
+        meta.setPort(Integer.parseInt(array_1[1]));
+        meta.setWeight(Integer.parseInt(array_1[2]));
+        meta.setConnCount(Integer.parseInt(array_1[3]));
+
+        return meta;
+    }
+}

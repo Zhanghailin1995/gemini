@@ -4,16 +4,30 @@ package io.gemini.registry;
  * gemini
  * io.gemini.registry.RegisterMeta
  *
+ * 服务注册元数据
+ * Address(host,port)
+ *
+ * ServiceMeta(group,serviceProviderName,version)
+ * group,version 不用解释
+ * serviceProviderName 这个注册中心是使用Jupiter改造过来的，保留了这个字段。（Jupiter是RPC框架，注册中心需要保留注册信息到类级别）
+ * 其实这个注册中心仅仅只需要提供一个RESTful接口
+ * 包含所有的提供IM服务器的ip和port,weight,connCount就可以了。连接路由层拿到这些数据直接根据路由规则（轮询，加权轮询，一致性哈希）选择一台服务直连就可以了
+ *
+ * weight 权重
+ *
+ * connCount 建议连接数
+ *
+ *
  * @author zhanghailin
  */
 public class RegisterMeta {
 
     // 地址
     private Address address = new Address();
-
+    // metadata
+    private ServiceMeta serviceMeta = new ServiceMeta();
     // 权重 hashCode() 与 equals() 不把weight计算在内
     private volatile int weight;
-
     // 建议连接数, jupiter客户端会根据connCount的值去建立对应数量的连接, hashCode() 与 equals() 不把connCount计算在内
     private volatile int connCount;
 
@@ -31,6 +45,38 @@ public class RegisterMeta {
 
     public void setPort(int port) {
         address.setPort(port);
+    }
+
+    public String getGroup() {
+        return serviceMeta.getGroup();
+    }
+
+    public void setGroup(String group) {
+        serviceMeta.setGroup(group);
+    }
+
+    public String getServiceProviderName() {
+        return serviceMeta.getServiceProviderName();
+    }
+
+    public void setServiceProviderName(String serviceProviderName) {
+        serviceMeta.setServiceProviderName(serviceProviderName);
+    }
+
+    public String getVersion() {
+        return serviceMeta.getVersion();
+    }
+
+    public void setVersion(String version) {
+        serviceMeta.setVersion(version);
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public ServiceMeta getServiceMeta() {
+        return serviceMeta;
     }
 
     public int getWeight() {
@@ -56,24 +102,26 @@ public class RegisterMeta {
 
         RegisterMeta that = (RegisterMeta) o;
 
-        // 地址相同就代表元数据相同
-        return !address.equals(that.address);
+        return !(address != null ? !address.equals(that.address) : that.address != null)
+                && !(serviceMeta != null ? !serviceMeta.equals(that.serviceMeta) : that.serviceMeta != null);
     }
 
     @Override
     public int hashCode() {
-        return address != null ? address.hashCode() : 0;
+        int result = address != null ? address.hashCode() : 0;
+        result = 31 * result + (serviceMeta != null ? serviceMeta.hashCode() : 0);
+        return result;
     }
 
     @Override
     public String toString() {
         return "RegisterMeta{" +
                 "address=" + address +
+                ", serviceMeta=" + serviceMeta +
                 ", weight=" + weight +
                 ", connCount=" + connCount +
                 '}';
     }
-
 
     /**
      * 不要轻易修改成员变量, 否则将影响hashCode和equals, Address需要经常放入List, Map等容器中.
@@ -129,6 +177,79 @@ public class RegisterMeta {
             return "Address{" +
                     "host='" + host + '\'' +
                     ", port=" + port +
+                    '}';
+        }
+    }
+
+    /**
+     * 不要轻易修改成员变量, 否则将影响hashCode和equals, ServiceMeta需要经常放入List, Map等容器中.
+     */
+    public static class ServiceMeta {
+        // 组别
+        private String group;
+        // 服务名
+        private String serviceProviderName;
+        // 版本信息
+        private String version;
+
+        public ServiceMeta() {}
+
+        public ServiceMeta(String group, String serviceProviderName, String version) {
+            this.group = group;
+            this.serviceProviderName = serviceProviderName;
+            this.version = version;
+        }
+
+        public String getGroup() {
+            return group;
+        }
+
+        public void setGroup(String group) {
+            this.group = group;
+        }
+
+        public String getServiceProviderName() {
+            return serviceProviderName;
+        }
+
+        public void setServiceProviderName(String serviceProviderName) {
+            this.serviceProviderName = serviceProviderName;
+        }
+
+        public String getVersion() {
+            return version;
+        }
+
+        public void setVersion(String version) {
+            this.version = version;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            ServiceMeta that = (ServiceMeta) o;
+
+            return !(group != null ? !group.equals(that.group) : that.group != null)
+                    && !(serviceProviderName != null ? !serviceProviderName.equals(that.serviceProviderName) : that.serviceProviderName != null)
+                    && !(version != null ? !version.equals(that.version) : that.version != null);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = group != null ? group.hashCode() : 0;
+            result = 31 * result + (serviceProviderName != null ? serviceProviderName.hashCode() : 0);
+            result = 31 * result + (version != null ? version.hashCode() : 0);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "ServiceMeta{" +
+                    "group='" + group + '\'' +
+                    ", serviceProviderName='" + serviceProviderName + '\'' +
+                    ", version='" + version + '\'' +
                     '}';
         }
     }
