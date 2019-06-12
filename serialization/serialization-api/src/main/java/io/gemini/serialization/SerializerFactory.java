@@ -15,12 +15,11 @@
  */
 package io.gemini.serialization;
 
+import io.gemini.common.util.ServiceLoader;
 import io.gemini.common.util.internal.logging.InternalLogger;
 import io.gemini.common.util.internal.logging.InternalLoggerFactory;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.ServiceLoader;
+import io.netty.util.collection.ByteObjectHashMap;
+import io.netty.util.collection.ByteObjectMap;
 
 /**
  * Holds all serializers.
@@ -34,7 +33,7 @@ public final class SerializerFactory {
 
     private static final InternalLogger logger = InternalLoggerFactory.getInstance(SerializerFactory.class);
 
-    private static final Map<Byte,Serializer> serializers = new HashMap<>();
+    private static final ByteObjectMap<Serializer> serializers = new ByteObjectHashMap<>();
 
     static {
         Iterable<Serializer> all = ServiceLoader.load(Serializer.class);

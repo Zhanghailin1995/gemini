@@ -40,6 +40,17 @@
             <artifactId>disruptor</artifactId>
         </dependency>
 
+        <!-- 直接依赖了netty的一些工具类-->
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-common</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jctools</groupId>
+            <artifactId>jctools-core</artifactId>
+        </dependency>
+
     </dependencies>
 
 </project>
