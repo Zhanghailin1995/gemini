@@ -1,6 +1,10 @@
 package io.gemini.core.server;
 
+import io.gemini.registry.RegisterMeta;
+import io.gemini.registry.Registry;
+import io.gemini.registry.RegistryService;
 import io.gemini.transport.JAcceptor;
+
 
 /**
  * gemini
@@ -8,7 +12,44 @@ import io.gemini.transport.JAcceptor;
  *
  * @author zhanghailin
  */
-public interface Server {
+public interface Server extends Registry {
+
+    /**
+     * 本地服务注册.
+     */
+    interface ServiceRegistry {
+        /**
+         * 设置服务组别
+         */
+        ServiceRegistry group(String group);
+
+        /**
+         * 设置服务版本号
+         */
+        ServiceRegistry version(String version);
+
+        /**
+         * 设置服务权重(0 < weight <= 100).
+         */
+        ServiceRegistry weight(int weight);
+
+        /**
+         * 设置服务名称
+         */
+        ServiceRegistry providerName(String providerName);
+
+        RegisterMeta register();
+    }
+
+    /**
+     * 注册服务实例
+     */
+    RegistryService registryService();
+
+    /**
+     * 获取服务注册(本地)工具.
+     */
+    ServiceRegistry serviceRegistry();
 
     /**
      * 网络层acceptor.

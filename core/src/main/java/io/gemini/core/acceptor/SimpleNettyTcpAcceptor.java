@@ -148,7 +148,7 @@ public class SimpleNettyTcpAcceptor extends NettyTcpAcceptor {
     }
 
     @Override
-    public void setProcessor(MessageProcessor processor) {
+    protected void setProcessor(MessageProcessor processor) {
         handler.processor(Requires.requireNotNull(processor, "processor"));
     }
 

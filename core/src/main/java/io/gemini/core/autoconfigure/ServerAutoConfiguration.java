@@ -28,7 +28,13 @@ public class ServerAutoConfiguration {
     public Server defaultServer() {
         DefaultServer server = new DefaultServer();
         SimpleNettyTcpAcceptor acceptor = new SimpleNettyTcpAcceptor(properties.getPort());
-        acceptor.setProcessor(processor());
+        //TODO 网络层配置
+        /**
+         * JConfigGroup configGroup = acceptor.configGroup();
+         * JConfig parent = configGroup.parent();
+         * parent.setOption(JOption<T> option, T value);
+         */
+        acceptor.withProcessor(processor());
         server.withAcceptor(acceptor);
         return server;
     }

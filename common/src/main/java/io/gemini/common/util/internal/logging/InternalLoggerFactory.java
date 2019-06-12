@@ -38,10 +38,10 @@ public abstract class InternalLoggerFactory {
         InternalLoggerFactory f;
         try {
             f = new Slf4JLoggerFactory(true);
-            f.newInstance(name).debug("Using SLF4J as the default logging framework");
+            f.newInstance(name).info("Using SLF4J as the default logging framework");
         } catch (Throwable t) {
             f = new JdkLoggerFactory();
-            f.newInstance(name).debug("Using java.util.logging as the default logging framework");
+            f.newInstance(name).info("Using java.util.logging as the default logging framework");
         }
         return f;
     }

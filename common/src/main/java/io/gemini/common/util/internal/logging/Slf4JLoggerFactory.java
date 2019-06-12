@@ -15,8 +15,10 @@
  */
 package io.gemini.common.util.internal.logging;
 
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.helpers.NOPLoggerFactory;
+import org.slf4j.spi.LocationAwareLogger;
 
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -63,8 +65,15 @@ public class Slf4JLoggerFactory extends InternalLoggerFactory {
         }
     }
 
+
     @Override
     public InternalLogger newInstance(String name) {
-        return new Slf4JLogger(LoggerFactory.getLogger(name));
+        return wrapLogger(LoggerFactory.getLogger(name));
+    }
+
+    // package-private for testing.
+    static InternalLogger wrapLogger(Logger logger) {
+        return logger instanceof LocationAwareLogger ?
+                new LocationAwareSlf4JLogger((LocationAwareLogger) logger) : new Slf4JLogger(logger);
     }
 }

@@ -88,6 +88,12 @@
                 <version>${project.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>gemini-registry-zookeeper</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
             <!-- ### transport impl: begin -->
             <dependency>
                 <groupId>${project.groupId}</groupId>

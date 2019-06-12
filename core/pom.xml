@@ -17,7 +17,11 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>gemini-transport-netty</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>gemini-registry-zookeeper</artifactId>
         </dependency>
 
         <dependency>

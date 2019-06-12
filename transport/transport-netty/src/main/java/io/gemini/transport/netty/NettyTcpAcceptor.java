@@ -4,7 +4,6 @@ import io.gemini.common.contants.Constants;
 import io.gemini.common.util.internal.logging.InternalLogger;
 import io.gemini.common.util.internal.logging.InternalLoggerFactory;
 import io.gemini.transport.JConfigGroup;
-import io.gemini.transport.netty.handler.AcceptorHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
@@ -28,7 +27,7 @@ import java.util.concurrent.ThreadFactory;
  */
 public abstract class NettyTcpAcceptor extends NettyAcceptor {
 
-    private static final InternalLogger logger = InternalLoggerFactory.getInstance(AcceptorHandler.class);
+    private static final InternalLogger logger = InternalLoggerFactory.getInstance(NettyTcpAcceptor.class);
 
     private final boolean isNative; // use native transport
     private final NettyConfig.NettyTcpConfigGroup configGroup = new NettyConfig.NettyTcpConfigGroup();
@@ -199,7 +198,7 @@ public abstract class NettyTcpAcceptor extends NettyAcceptor {
         ChannelFuture future = bind(localAddress).sync();
 
         if (logger.isInfoEnabled()) {
-            logger.info("Jupiter TCP server start" + (sync ? ", and waits until the server socket closed." : ".")
+            logger.info("Gemini TCP server start" + (sync ? ", and waits until the server socket closed." : ".")
                     + Constants.NEWLINE + " {}.", toString());
         }
 

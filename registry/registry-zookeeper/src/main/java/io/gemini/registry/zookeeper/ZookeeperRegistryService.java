@@ -3,6 +3,7 @@ package io.gemini.registry.zookeeper;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import io.gemini.common.util.NetUtil;
+import io.gemini.common.util.SpiMetadata;
 import io.gemini.common.util.SystemPropertyUtil;
 import io.gemini.common.util.internal.logging.InternalLogger;
 import io.gemini.common.util.internal.logging.InternalLoggerFactory;
@@ -10,8 +11,11 @@ import io.gemini.registry.AbstractRegistryService;
 import io.gemini.registry.RegisterMeta;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.curator.framework.CuratorFramework;
+import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.framework.api.BackgroundCallback;
 import org.apache.curator.framework.api.CuratorEvent;
+import org.apache.curator.framework.state.ConnectionState;
+import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.KeeperException;
 
@@ -20,12 +24,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
+import static io.gemini.common.util.Requires.requireNotNull;
+
 /**
  * gemini
  * io.gemini.registry.zookeeper.ZookeeperRegistryService
  *
  * @author zhanghailin
  */
+@SpiMetadata(name = "zookeeper")
 public class ZookeeperRegistryService extends AbstractRegistryService {
 
     private static final InternalLogger logger = InternalLoggerFactory.getInstance(ZookeeperRegistryService.class);
@@ -65,7 +72,7 @@ public class ZookeeperRegistryService extends AbstractRegistryService {
 
     @Override
     public void destroy() {
-
+        configClient.close();
     }
 
     @Override
@@ -88,6 +95,13 @@ public class ZookeeperRegistryService extends AbstractRegistryService {
 
         try {
             meta.setHost(address);
+            String path = String.format("%s/%s:%s:%s:%s",
+                    directory,
+                    meta.getHost(),
+                    String.valueOf(meta.getPort()),
+                    String.valueOf(meta.getWeight()),
+                    String.valueOf(meta.getConnCount()));
+            logger.info("create EPHEMERAL node,path:[{}]",path);
 
             // The znode will be deleted upon the client's disconnect.
             configClient.create().withMode(CreateMode.EPHEMERAL).inBackground((client, event) -> {
@@ -96,13 +110,7 @@ public class ZookeeperRegistryService extends AbstractRegistryService {
                 }
 
                 logger.info("Register: {} - {}.", meta, event);
-            }).forPath(
-                    String.format("%s/%s:%s:%s:%s",
-                            directory,
-                            meta.getHost(),
-                            String.valueOf(meta.getPort()),
-                            String.valueOf(meta.getWeight()),
-                            String.valueOf(meta.getConnCount())));
+            }).forPath(path);
         } catch (Exception e) {
             if (logger.isWarnEnabled()) {
                 logger.warn("Create register meta: {} path failed, {}.", meta, Throwables.getStackTraceAsString(e));
@@ -187,6 +195,27 @@ public class ZookeeperRegistryService extends AbstractRegistryService {
     @Override
     public void connectToRegistryServer(String connectString) {
 
+        requireNotNull(connectString, "connectString");
+
+        configClient = CuratorFrameworkFactory.newClient(
+                connectString, sessionTimeoutMs, connectionTimeoutMs, new ExponentialBackoffRetry(500, 20));
+
+        configClient.getConnectionStateListenable().addListener((client, newState) -> {
+
+            logger.info("Zookeeper connection state changed {}.", newState);
+
+            if (newState == ConnectionState.RECONNECTED) {
+
+                logger.info("Zookeeper connection has been re-established, will re-subscribe and re-register.");
+
+                // 重新发布服务
+                for (RegisterMeta meta : getRegisterMetaMap().keySet()) {
+                    ZookeeperRegistryService.super.register(meta);
+                }
+            }
+        });
+
+        configClient.start();
     }
 
     private RegisterMeta parseRegisterMeta(String data) {

@@ -167,7 +167,7 @@ public abstract class NettyAcceptor implements JAcceptor {
         return waterMark;
     }
 
-    public abstract void setProcessor(MessageProcessor processor);
+    protected abstract void setProcessor(MessageProcessor processor);
 
     /**
      * Sets the percentage of the desired amount of time spent for I/O in the child event loops.
