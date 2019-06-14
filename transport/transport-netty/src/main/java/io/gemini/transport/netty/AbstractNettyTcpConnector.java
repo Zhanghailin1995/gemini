@@ -1,10 +1,19 @@
 package io.gemini.transport.netty;
 
+import io.gemini.transport.Config;
+import io.gemini.transport.Connection;
+import io.gemini.transport.UnresolvedAddress;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelOption;
+import io.netty.channel.EventLoopGroup;
 import io.netty.channel.WriteBufferWaterMark;
 import io.netty.channel.epoll.EpollChannelOption;
+import io.netty.channel.epoll.EpollEventLoopGroup;
 import io.netty.channel.epoll.EpollMode;
+import io.netty.channel.kqueue.KQueueEventLoopGroup;
+import io.netty.channel.nio.NioEventLoopGroup;
+
+import java.util.concurrent.ThreadFactory;
 
 /**
  * gemini
@@ -101,6 +110,43 @@ public abstract class AbstractNettyTcpConnector extends NettyConnector {
             } else {
                 boot.option(EpollChannelOption.EPOLL_MODE, EpollMode.LEVEL_TRIGGERED);
             }
+        }
+    }
+
+    @Override
+    public Connection connect(UnresolvedAddress address) {
+        return connect(address, false);
+    }
+
+    @Override
+    public Config config() {
+        return childConfig;
+    }
+
+    @Override
+    public void setIoRatio(int workerIoRatio) {
+        EventLoopGroup worker = worker();
+        if (worker instanceof EpollEventLoopGroup) {
+            ((EpollEventLoopGroup) worker).setIoRatio(workerIoRatio);
+        } else if (worker instanceof KQueueEventLoopGroup) {
+            ((KQueueEventLoopGroup) worker).setIoRatio(workerIoRatio);
+        } else if (worker instanceof NioEventLoopGroup) {
+            ((NioEventLoopGroup) worker).setIoRatio(workerIoRatio);
+        }
+    }
+
+    @Override
+    protected EventLoopGroup initEventLoopGroup(int nThreads, ThreadFactory tFactory) {
+        SocketChannelProvider.SocketType socketType = socketType();
+        switch (socketType) {
+            case NATIVE_EPOLL:
+                return new EpollEventLoopGroup(nThreads, tFactory);
+            case NATIVE_KQUEUE:
+                return new KQueueEventLoopGroup(nThreads, tFactory);
+            case JAVA_NIO:
+                return new NioEventLoopGroup(nThreads, tFactory);
+            default:
+                throw new IllegalStateException("Invalid socket type: " + socketType);
         }
     }
 

@@ -1,10 +1,14 @@
 package io.gemini.transport.netty;
 
+import io.gemini.common.contants.Constants;
 import io.gemini.common.util.Requires;
 import io.gemini.transport.CodecConfig;
 import io.gemini.transport.Config;
 import io.gemini.transport.Option;
-import io.gemini.transport.netty.handler.*;
+import io.gemini.transport.netty.handler.LowCopyProtocolDecoder;
+import io.gemini.transport.netty.handler.LowCopyProtocolEncoder;
+import io.gemini.transport.netty.handler.ProtocolDecoder;
+import io.gemini.transport.netty.handler.ProtocolEncoder;
 import io.gemini.transport.netty.handler.acceptor.AcceptorHandler;
 import io.gemini.transport.netty.handler.acceptor.AcceptorIdleStateTrigger;
 import io.gemini.transport.processor.ProviderProcessor;
@@ -13,6 +17,7 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOutboundHandler;
+import io.netty.handler.flush.FlushConsolidationHandler;
 import io.netty.handler.timeout.IdleStateHandler;
 
 import java.net.SocketAddress;
@@ -135,7 +140,8 @@ public class SimpleNettyTcpAcceptor extends AbstractNettyTcpAcceptor {
             @Override
             protected void initChannel(Channel ch) throws Exception {
                 ch.pipeline().addLast(
-                        new IdleStateHandler(45, 0, 0, TimeUnit.SECONDS),
+                        new FlushConsolidationHandler(Constants.EXPLICIT_FLUSH_AFTER_FLUSHES, true),
+                        new IdleStateHandler(Constants.READER_IDLE_TIME_SECONDS, 0, 0, TimeUnit.SECONDS),
                         idleStateTrigger,
                         CodecConfig.isCodecLowCopy() ? new LowCopyProtocolDecoder() : new ProtocolDecoder(),
                         encoder,

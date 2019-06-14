@@ -193,6 +193,14 @@ public abstract class NettyConnector implements Connector<Connection> {
         return bootstrap;
     }
 
+    /**
+     * The {@link EventLoopGroup} for the child. These {@link EventLoopGroup}'s are used to handle
+     * all the events and IO for {@link io.netty.channel.Channel}'s.
+     */
+    protected EventLoopGroup worker() {
+        return worker;
+    }
+
 
     /**
      * Creates the same address of the channel group.
@@ -205,9 +213,7 @@ public abstract class NettyConnector implements Connector<Connection> {
      * Sets consumer's processor.
      */
     @SuppressWarnings("unused")
-    protected void setProcessor(ConsumerProcessor processor) {
-        // the default implementation does nothing
-    }
+    protected abstract void setProcessor(ConsumerProcessor processor);
 
     /**
      * Create a WriteBufferWaterMark is used to set low water mark and high water mark for the write buffer.
