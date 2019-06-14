@@ -13,69 +13,49 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.gemini.transport.netty.handler;
+package io.gemini.transport.netty.handler.connector;
 
 import com.google.common.base.Throwables;
 import io.gemini.common.util.Signal;
 import io.gemini.common.util.internal.logging.InternalLogger;
 import io.gemini.common.util.internal.logging.InternalLoggerFactory;
-import io.gemini.transport.netty.channel.NettyChannel;
-import io.gemini.transport.payload.JMessagePayload;
-import io.gemini.transport.processor.MessageProcessor;
+import io.gemini.transport.netty.channel.NettyChan;
+import io.gemini.transport.payload.ResponsePayload;
+import io.gemini.transport.processor.ConsumerProcessor;
 import io.netty.channel.*;
 import io.netty.handler.codec.DecoderException;
 import io.netty.util.ReferenceCountUtil;
 
 import java.io.IOException;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * jupiter
- * org.jupiter.transport.netty.handler.acceptor
+ * org.jupiter.transport.netty.handler.connector
  *
  * @author jiachun.fjc
  */
 @ChannelHandler.Sharable
-public class AcceptorHandler extends ChannelInboundHandlerAdapter {
+public class ConnectorHandler extends ChannelInboundHandlerAdapter {
 
-    private static final InternalLogger logger = InternalLoggerFactory.getInstance(AcceptorHandler.class);
+    private static final InternalLogger logger = InternalLoggerFactory.getInstance(ConnectorHandler.class);
 
-
-    private static final AtomicInteger channelCounter = new AtomicInteger(0);
-
-    private MessageProcessor processor;
+    private ConsumerProcessor processor;
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        if (msg instanceof JMessagePayload) {
-            NettyChannel channel = NettyChannel.attachChannel(ctx);
+        Channel ch = ctx.channel();
+
+        if (msg instanceof ResponsePayload) {
             try {
-                // 业务委托给processor执行
-                processor.handleMessage(channel, (JMessagePayload) msg);
+                processor.handleResponse(NettyChan.attachChannel(ch), (ResponsePayload) msg);
             } catch (Throwable t) {
-                processor.handleException(channel, (JMessagePayload) msg, t);
+                logger.error("An exception was caught: {}, on {} #channelRead().", Throwables.getStackTraceAsString(t), ch);
             }
         } else {
+            logger.warn("Unexpected message type received: {}, channel: {}.", msg.getClass(), ch);
+
             ReferenceCountUtil.release(msg);
         }
-    }
-
-    @Override
-    public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        int count = channelCounter.incrementAndGet();
-
-        logger.info("Connects with {} as the {}th channel.", ctx.channel(), count);
-
-        super.channelActive(ctx);
-    }
-
-    @Override
-    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        int count = channelCounter.getAndDecrement();
-
-        logger.warn("Disconnects with {} as the {}th channel.", ctx.channel(), count);
-
-        super.channelInactive(ctx);
     }
 
     @Override
@@ -113,7 +93,7 @@ public class AcceptorHandler extends ChannelInboundHandlerAdapter {
 
             ch.close();
         } else if (cause instanceof IOException) {
-            logger.error("An I/O exception was caught: {}, force to close channel: {}.", Throwables.getStackTraceAsString(cause), ch);
+            logger.error("I/O exception was caught: {}, force to close channel: {}.", Throwables.getStackTraceAsString(cause), ch);
 
             ch.close();
         } else if (cause instanceof DecoderException) {
@@ -125,11 +105,11 @@ public class AcceptorHandler extends ChannelInboundHandlerAdapter {
         }
     }
 
-    public MessageProcessor processor() {
+    public ConsumerProcessor processor() {
         return processor;
     }
 
-    public void processor(MessageProcessor processor) {
+    public void processor(ConsumerProcessor processor) {
         this.processor = processor;
     }
 }

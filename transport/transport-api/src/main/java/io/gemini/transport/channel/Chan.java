@@ -5,19 +5,19 @@ import java.net.SocketAddress;
 /**
  *
  * gemini
- * io.gemini.transport.channel.JChannel
+ * io.gemini.transport.channel.Chan
  *
  * @author zhanghailin
  */
-public interface JChannel {
+public interface Chan {
 
     /**
-     * Returns the identifier of this {@link JChannel}.
+     * Returns the identifier of this {@link Chan}.
      */
     String id();
 
     /**
-     * Return {@code true} if the {@link JChannel} is active and so connected.
+     * Return {@code true} if the {@link Chan} is active and so connected.
      */
     boolean isActive();
 
@@ -32,13 +32,13 @@ public interface JChannel {
     SocketAddress remoteAddress();
 
     /**
-     * Requests to close this {@link JChannel}.
+     * Requests to close this {@link Chan}.
      */
-    JChannel close();
+    Chan close();
 
 
     /**
      * Requests to write a message on the channel.
      */
-    JChannel write(Object msg);
+    Chan write(Object msg);
 }

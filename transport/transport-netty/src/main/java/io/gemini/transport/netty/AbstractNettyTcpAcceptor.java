@@ -3,7 +3,7 @@ package io.gemini.transport.netty;
 import io.gemini.common.contants.Constants;
 import io.gemini.common.util.internal.logging.InternalLogger;
 import io.gemini.common.util.internal.logging.InternalLoggerFactory;
-import io.gemini.transport.JConfigGroup;
+import io.gemini.transport.ConfigGroup;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
@@ -21,84 +21,84 @@ import java.util.concurrent.ThreadFactory;
 
 /**
  * gemini
- * io.gemini.transport.netty.NettyTcpAcceptor
+ * io.gemini.transport.netty.AbstractNettyTcpAcceptor
  *
  * @author zhanghailin
  */
-public abstract class NettyTcpAcceptor extends NettyAcceptor {
+public abstract class AbstractNettyTcpAcceptor extends NettyAcceptor {
 
-    private static final InternalLogger logger = InternalLoggerFactory.getInstance(NettyTcpAcceptor.class);
+    private static final InternalLogger logger = InternalLoggerFactory.getInstance(AbstractNettyTcpAcceptor.class);
 
     private final boolean isNative; // use native transport
     private final NettyConfig.NettyTcpConfigGroup configGroup = new NettyConfig.NettyTcpConfigGroup();
 
-    public NettyTcpAcceptor(int port) {
+    public AbstractNettyTcpAcceptor(int port) {
         super(Protocol.TCP, new InetSocketAddress(port));
         isNative = false;
         init();
     }
 
-    public NettyTcpAcceptor(SocketAddress localAddress) {
+    public AbstractNettyTcpAcceptor(SocketAddress localAddress) {
         super(Protocol.TCP, localAddress);
         isNative = false;
         init();
     }
 
-    public NettyTcpAcceptor(int port, int nWorkers) {
+    public AbstractNettyTcpAcceptor(int port, int nWorkers) {
         super(Protocol.TCP, new InetSocketAddress(port), nWorkers);
         isNative = false;
         init();
     }
 
-    public NettyTcpAcceptor(int port, int nBosses, int nWorkers) {
+    public AbstractNettyTcpAcceptor(int port, int nBosses, int nWorkers) {
         super(Protocol.TCP, new InetSocketAddress(port), nBosses, nWorkers);
         isNative = false;
         init();
     }
 
-    public NettyTcpAcceptor(SocketAddress localAddress, int nWorkers) {
+    public AbstractNettyTcpAcceptor(SocketAddress localAddress, int nWorkers) {
         super(Protocol.TCP, localAddress, nWorkers);
         isNative = false;
         init();
     }
 
-    public NettyTcpAcceptor(SocketAddress localAddress, int nBosses, int nWorkers) {
+    public AbstractNettyTcpAcceptor(SocketAddress localAddress, int nBosses, int nWorkers) {
         super(Protocol.TCP, localAddress, nBosses, nWorkers);
         isNative = false;
         init();
     }
 
-    public NettyTcpAcceptor(int port, boolean isNative) {
+    public AbstractNettyTcpAcceptor(int port, boolean isNative) {
         super(Protocol.TCP, new InetSocketAddress(port));
         this.isNative = isNative;
         init();
     }
 
-    public NettyTcpAcceptor(SocketAddress localAddress, boolean isNative) {
+    public AbstractNettyTcpAcceptor(SocketAddress localAddress, boolean isNative) {
         super(Protocol.TCP, localAddress);
         this.isNative = isNative;
         init();
     }
 
-    public NettyTcpAcceptor(int port, int nWorkers, boolean isNative) {
+    public AbstractNettyTcpAcceptor(int port, int nWorkers, boolean isNative) {
         super(Protocol.TCP, new InetSocketAddress(port), nWorkers);
         this.isNative = isNative;
         init();
     }
 
-    public NettyTcpAcceptor(int port, int nBosses, int nWorkers, boolean isNative) {
+    public AbstractNettyTcpAcceptor(int port, int nBosses, int nWorkers, boolean isNative) {
         super(Protocol.TCP, new InetSocketAddress(port), nBosses, nWorkers);
         this.isNative = isNative;
         init();
     }
 
-    public NettyTcpAcceptor(SocketAddress localAddress, int nWorkers, boolean isNative) {
+    public AbstractNettyTcpAcceptor(SocketAddress localAddress, int nWorkers, boolean isNative) {
         super(Protocol.TCP, localAddress, nWorkers);
         this.isNative = isNative;
         init();
     }
 
-    public NettyTcpAcceptor(SocketAddress localAddress, int nBosses, int nWorkers, boolean isNative) {
+    public AbstractNettyTcpAcceptor(SocketAddress localAddress, int nBosses, int nWorkers, boolean isNative) {
         super(Protocol.TCP, localAddress, nBosses, nWorkers);
         this.isNative = isNative;
         init();
@@ -209,7 +209,7 @@ public abstract class NettyTcpAcceptor extends NettyAcceptor {
     }
 
     @Override
-    public JConfigGroup configGroup() {
+    public ConfigGroup configGroup() {
         return configGroup;
     }
 

@@ -1,10 +1,9 @@
-package io.gemini.core.acceptor;
+package io.gemini.transport.netty;
 
 import io.gemini.common.util.Requires;
 import io.gemini.transport.CodecConfig;
 import io.gemini.transport.Config;
 import io.gemini.transport.Option;
-import io.gemini.transport.netty.AbstractNettyTcpAcceptor;
 import io.gemini.transport.netty.handler.*;
 import io.gemini.transport.netty.handler.acceptor.AcceptorHandler;
 import io.gemini.transport.netty.handler.acceptor.AcceptorIdleStateTrigger;

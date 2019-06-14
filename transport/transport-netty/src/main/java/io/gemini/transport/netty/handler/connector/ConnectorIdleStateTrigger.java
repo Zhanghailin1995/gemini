@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.gemini.transport.netty.handler;
+package io.gemini.transport.netty.handler.connector;
 
-import io.gemini.transport.exception.IoSignals;
+import io.gemini.transport.netty.Heartbeats;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -23,22 +23,21 @@ import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 
 /**
- * gemini
- * io.gemini.transport.netty.handler.AcceptorIdleStateTrigger
+ * jupiter
+ * org.jupiter.transport.netty.handler.connector
  *
- * Forked from <a href="https://github.com/fengjiachun/Jupiter">Netty</a>.
- *
- * @author zhanghailin
+ * @author jiachun.fjc
  */
 @ChannelHandler.Sharable
-public class AcceptorIdleStateTrigger extends ChannelInboundHandlerAdapter {
+public class ConnectorIdleStateTrigger extends ChannelInboundHandlerAdapter {
 
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
         if (evt instanceof IdleStateEvent) {
             IdleState state = ((IdleStateEvent) evt).state();
-            if (state == IdleState.READER_IDLE) {
-                throw IoSignals.READER_IDLE;
+            if (state == IdleState.WRITER_IDLE) {
+                // write heartbeat to server
+                ctx.writeAndFlush(Heartbeats.heartbeatContent());
             }
         } else {
             super.userEventTriggered(ctx, evt);

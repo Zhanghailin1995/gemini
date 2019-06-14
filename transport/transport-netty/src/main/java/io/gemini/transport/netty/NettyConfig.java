@@ -17,9 +17,9 @@ package io.gemini.transport.netty;
 
 import com.google.common.collect.Lists;
 import io.gemini.common.util.Requires;
-import io.gemini.transport.JConfig;
-import io.gemini.transport.JConfigGroup;
-import io.gemini.transport.JOption;
+import io.gemini.transport.Config;
+import io.gemini.transport.ConfigGroup;
+import io.gemini.transport.Option;
 
 import java.util.Collections;
 import java.util.List;
@@ -32,18 +32,18 @@ import java.util.List;
  *
  * @author jiachun.fjc
  */
-public class NettyConfig implements JConfig {
+public class NettyConfig implements Config {
 
     private volatile int ioRatio = 100;
     private volatile boolean preferDirect = true;
     private volatile boolean usePooledAllocator = true;
 
     @Override
-    public List<JOption<?>> getOptions() {
-        return getOptions(null, JOption.IO_RATIO);
+    public List<Option<?>> getOptions() {
+        return getOptions(null, Option.IO_RATIO);
     }
 
-    protected List<JOption<?>> getOptions(List<JOption<?>> result, JOption<?>... options) {
+    protected List<Option<?>> getOptions(List<Option<?>> result, Option<?>... options) {
         if (result == null) {
             result = Lists.newArrayList();
         }
@@ -53,20 +53,20 @@ public class NettyConfig implements JConfig {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T getOption(JOption<T> option) {
+    public <T> T getOption(Option<T> option) {
         Requires.requireNotNull(option);
 
-        if (option == JOption.IO_RATIO) {
+        if (option == Option.IO_RATIO) {
             return (T) Integer.valueOf(getIoRatio());
         }
         return null;
     }
 
     @Override
-    public <T> boolean setOption(JOption<T> option, T value) {
+    public <T> boolean setOption(Option<T> option, T value) {
         validate(option, value);
 
-        if (option == JOption.IO_RATIO) {
+        if (option == Option.IO_RATIO) {
             setIoRatio(castToInteger(value));
         } else {
             return false;
@@ -104,7 +104,7 @@ public class NettyConfig implements JConfig {
         this.usePooledAllocator = usePooledAllocator;
     }
 
-    protected <T> void validate(JOption<T> option, T value) {
+    protected <T> void validate(Option<T> option, T value) {
         Requires.requireNotNull(option, "option");
         Requires.requireNotNull(value, "value");
     }
@@ -148,7 +148,7 @@ public class NettyConfig implements JConfig {
     /**
      * TCP netty option
      */
-    public static class NettyTcpConfigGroup implements JConfigGroup {
+    public static class NettyTcpConfigGroup implements ConfigGroup {
 
         private ParentConfig parent = new ParentConfig();
         private ChildConfig child = new ChildConfig();
@@ -181,20 +181,20 @@ public class NettyConfig implements JConfig {
             private volatile boolean ipTransparent = false;
 
             @Override
-            public List<JOption<?>> getOptions() {
+            public List<Option<?>> getOptions() {
                 return getOptions(super.getOptions(),
-                        JOption.SO_BACKLOG,
-                        JOption.SO_RCVBUF,
-                        JOption.SO_REUSEADDR,
-                        JOption.TCP_FASTOPEN,
-                        JOption.TCP_DEFER_ACCEPT,
-                        JOption.EDGE_TRIGGERED,
-                        JOption.SO_REUSEPORT,
-                        JOption.IP_FREEBIND,
-                        JOption.IP_TRANSPARENT);
+                        Option.SO_BACKLOG,
+                        Option.SO_RCVBUF,
+                        Option.SO_REUSEADDR,
+                        Option.TCP_FASTOPEN,
+                        Option.TCP_DEFER_ACCEPT,
+                        Option.EDGE_TRIGGERED,
+                        Option.SO_REUSEPORT,
+                        Option.IP_FREEBIND,
+                        Option.IP_TRANSPARENT);
             }
 
-            protected List<JOption<?>> getOptions(List<JOption<?>> result, JOption<?>... options) {
+            protected List<Option<?>> getOptions(List<Option<?>> result, Option<?>... options) {
                 if (result == null) {
                     result = Lists.newArrayList();
                 }
@@ -204,34 +204,34 @@ public class NettyConfig implements JConfig {
 
             @SuppressWarnings("unchecked")
             @Override
-            public <T> T getOption(JOption<T> option) {
+            public <T> T getOption(Option<T> option) {
                 Requires.requireNotNull(option);
 
-                if (option == JOption.SO_BACKLOG) {
+                if (option == Option.SO_BACKLOG) {
                     return (T) Integer.valueOf(getBacklog());
                 }
-                if (option == JOption.SO_RCVBUF) {
+                if (option == Option.SO_RCVBUF) {
                     return (T) Integer.valueOf(getRcvBuf());
                 }
-                if (option == JOption.SO_REUSEADDR) {
+                if (option == Option.SO_REUSEADDR) {
                     return (T) Boolean.valueOf(isReuseAddress());
                 }
-                if (option == JOption.TCP_FASTOPEN) {
+                if (option == Option.TCP_FASTOPEN) {
                     return (T) Integer.valueOf(getPendingFastOpenRequestsThreshold());
                 }
-                if (option == JOption.TCP_DEFER_ACCEPT) {
+                if (option == Option.TCP_DEFER_ACCEPT) {
                     return (T) Integer.valueOf(getTcpDeferAccept());
                 }
-                if (option == JOption.EDGE_TRIGGERED) {
+                if (option == Option.EDGE_TRIGGERED) {
                     return (T) Boolean.valueOf(isEdgeTriggered());
                 }
-                if (option == JOption.SO_REUSEPORT) {
+                if (option == Option.SO_REUSEPORT) {
                     return (T) Boolean.valueOf(isReusePort());
                 }
-                if (option == JOption.IP_FREEBIND) {
+                if (option == Option.IP_FREEBIND) {
                     return (T) Boolean.valueOf(isIpFreeBind());
                 }
-                if (option == JOption.IP_TRANSPARENT) {
+                if (option == Option.IP_TRANSPARENT) {
                     return (T) Boolean.valueOf(isIpTransparent());
                 }
 
@@ -239,26 +239,26 @@ public class NettyConfig implements JConfig {
             }
 
             @Override
-            public <T> boolean setOption(JOption<T> option, T value) {
+            public <T> boolean setOption(Option<T> option, T value) {
                 validate(option, value);
 
-                if (option == JOption.SO_BACKLOG) {
+                if (option == Option.SO_BACKLOG) {
                     setBacklog(castToInteger(value));
-                } else if (option == JOption.SO_RCVBUF) {
+                } else if (option == Option.SO_RCVBUF) {
                     setRcvBuf(castToInteger(value));
-                } else if (option == JOption.SO_REUSEADDR) {
+                } else if (option == Option.SO_REUSEADDR) {
                     setReuseAddress(castToBoolean(value));
-                } else if (option == JOption.TCP_FASTOPEN) {
+                } else if (option == Option.TCP_FASTOPEN) {
                     setPendingFastOpenRequestsThreshold(castToInteger(value));
-                } else if (option == JOption.TCP_DEFER_ACCEPT) {
+                } else if (option == Option.TCP_DEFER_ACCEPT) {
                     setTcpDeferAccept(castToInteger(value));
-                } else if (option == JOption.EDGE_TRIGGERED) {
+                } else if (option == Option.EDGE_TRIGGERED) {
                     setEdgeTriggered(castToBoolean(value));
-                } else if (option == JOption.SO_REUSEPORT) {
+                } else if (option == Option.SO_REUSEPORT) {
                     setReusePort(castToBoolean(value));
-                } else if (option == JOption.IP_FREEBIND) {
+                } else if (option == Option.IP_FREEBIND) {
                     setIpFreeBind(castToBoolean(value));
-                } else if (option == JOption.IP_TRANSPARENT) {
+                } else if (option == Option.IP_TRANSPARENT) {
                     setIpTransparent(castToBoolean(value));
                 } else {
                     return super.setOption(option, value);
@@ -370,32 +370,32 @@ public class NettyConfig implements JConfig {
             private volatile boolean tcpFastOpenConnect = false;
 
             @Override
-            public List<JOption<?>> getOptions() {
+            public List<Option<?>> getOptions() {
                 return getOptions(super.getOptions(),
-                        JOption.SO_RCVBUF,
-                        JOption.SO_SNDBUF,
-                        JOption.SO_LINGER,
-                        JOption.SO_REUSEADDR,
-                        JOption.CONNECT_TIMEOUT_MILLIS,
-                        JOption.WRITE_BUFFER_HIGH_WATER_MARK,
-                        JOption.WRITE_BUFFER_LOW_WATER_MARK,
-                        JOption.KEEP_ALIVE,
-                        JOption.TCP_NODELAY,
-                        JOption.IP_TOS,
-                        JOption.ALLOW_HALF_CLOSURE,
-                        JOption.TCP_NOTSENT_LOWAT,
-                        JOption.TCP_KEEPCNT,
-                        JOption.TCP_USER_TIMEOUT,
-                        JOption.TCP_KEEPIDLE,
-                        JOption.TCP_KEEPINTVL,
-                        JOption.EDGE_TRIGGERED,
-                        JOption.TCP_CORK,
-                        JOption.TCP_QUICKACK,
-                        JOption.IP_TRANSPARENT,
-                        JOption.TCP_FASTOPEN_CONNECT);
+                        Option.SO_RCVBUF,
+                        Option.SO_SNDBUF,
+                        Option.SO_LINGER,
+                        Option.SO_REUSEADDR,
+                        Option.CONNECT_TIMEOUT_MILLIS,
+                        Option.WRITE_BUFFER_HIGH_WATER_MARK,
+                        Option.WRITE_BUFFER_LOW_WATER_MARK,
+                        Option.KEEP_ALIVE,
+                        Option.TCP_NODELAY,
+                        Option.IP_TOS,
+                        Option.ALLOW_HALF_CLOSURE,
+                        Option.TCP_NOTSENT_LOWAT,
+                        Option.TCP_KEEPCNT,
+                        Option.TCP_USER_TIMEOUT,
+                        Option.TCP_KEEPIDLE,
+                        Option.TCP_KEEPINTVL,
+                        Option.EDGE_TRIGGERED,
+                        Option.TCP_CORK,
+                        Option.TCP_QUICKACK,
+                        Option.IP_TRANSPARENT,
+                        Option.TCP_FASTOPEN_CONNECT);
             }
 
-            protected List<JOption<?>> getOptions(List<JOption<?>> result, JOption<?>... options) {
+            protected List<Option<?>> getOptions(List<Option<?>> result, Option<?>... options) {
                 if (result == null) {
                     result = Lists.newArrayList();
                 }
@@ -405,70 +405,70 @@ public class NettyConfig implements JConfig {
 
             @SuppressWarnings("unchecked")
             @Override
-            public <T> T getOption(JOption<T> option) {
+            public <T> T getOption(Option<T> option) {
                 Requires.requireNotNull(option);
 
-                if (option == JOption.SO_RCVBUF) {
+                if (option == Option.SO_RCVBUF) {
                     return (T) Integer.valueOf(getRcvBuf());
                 }
-                if (option == JOption.SO_SNDBUF) {
+                if (option == Option.SO_SNDBUF) {
                     return (T) Integer.valueOf(getSndBuf());
                 }
-                if (option == JOption.SO_LINGER) {
+                if (option == Option.SO_LINGER) {
                     return (T) Integer.valueOf(getLinger());
                 }
-                if (option == JOption.IP_TOS) {
+                if (option == Option.IP_TOS) {
                     return (T) Integer.valueOf(getIpTos());
                 }
-                if (option == JOption.CONNECT_TIMEOUT_MILLIS) {
+                if (option == Option.CONNECT_TIMEOUT_MILLIS) {
                     return (T) Integer.valueOf(getConnectTimeoutMillis());
                 }
-                if (option == JOption.WRITE_BUFFER_HIGH_WATER_MARK) {
+                if (option == Option.WRITE_BUFFER_HIGH_WATER_MARK) {
                     return (T) Integer.valueOf(getWriteBufferHighWaterMark());
                 }
-                if (option == JOption.WRITE_BUFFER_LOW_WATER_MARK) {
+                if (option == Option.WRITE_BUFFER_LOW_WATER_MARK) {
                     return (T) Integer.valueOf(getWriteBufferLowWaterMark());
                 }
-                if (option == JOption.SO_REUSEADDR) {
+                if (option == Option.SO_REUSEADDR) {
                     return (T) Boolean.valueOf(isReuseAddress());
                 }
-                if (option == JOption.KEEP_ALIVE) {
+                if (option == Option.KEEP_ALIVE) {
                     return (T) Boolean.valueOf(isKeepAlive());
                 }
-                if (option == JOption.TCP_NODELAY) {
+                if (option == Option.TCP_NODELAY) {
                     return (T) Boolean.valueOf(isTcpNoDelay());
                 }
-                if (option == JOption.ALLOW_HALF_CLOSURE) {
+                if (option == Option.ALLOW_HALF_CLOSURE) {
                     return (T) Boolean.valueOf(isAllowHalfClosure());
                 }
-                if (option == JOption.TCP_NOTSENT_LOWAT) {
+                if (option == Option.TCP_NOTSENT_LOWAT) {
                     return (T) Long.valueOf(getTcpNotSentLowAt());
                 }
-                if (option == JOption.TCP_KEEPIDLE) {
+                if (option == Option.TCP_KEEPIDLE) {
                     return (T) Integer.valueOf(getTcpKeepIdle());
                 }
-                if (option == JOption.TCP_KEEPINTVL) {
+                if (option == Option.TCP_KEEPINTVL) {
                     return (T) Integer.valueOf(getTcpKeepInterval());
                 }
-                if (option == JOption.TCP_KEEPCNT) {
+                if (option == Option.TCP_KEEPCNT) {
                     return (T) Integer.valueOf(getTcpKeepCnt());
                 }
-                if (option == JOption.TCP_USER_TIMEOUT) {
+                if (option == Option.TCP_USER_TIMEOUT) {
                     return (T) Integer.valueOf(getTcpUserTimeout());
                 }
-                if (option == JOption.EDGE_TRIGGERED) {
+                if (option == Option.EDGE_TRIGGERED) {
                     return (T) Boolean.valueOf(isEdgeTriggered());
                 }
-                if (option == JOption.TCP_CORK) {
+                if (option == Option.TCP_CORK) {
                     return (T) Boolean.valueOf(isTcpCork());
                 }
-                if (option == JOption.TCP_QUICKACK) {
+                if (option == Option.TCP_QUICKACK) {
                     return (T) Boolean.valueOf(isTcpQuickAck());
                 }
-                if (option == JOption.IP_TRANSPARENT) {
+                if (option == Option.IP_TRANSPARENT) {
                     return (T) Boolean.valueOf(isIpTransparent());
                 }
-                if (option == JOption.TCP_FASTOPEN_CONNECT) {
+                if (option == Option.TCP_FASTOPEN_CONNECT) {
                     return (T) Boolean.valueOf(isTcpFastOpenConnect());
                 }
 
@@ -476,50 +476,50 @@ public class NettyConfig implements JConfig {
             }
 
             @Override
-            public <T> boolean setOption(JOption<T> option, T value) {
+            public <T> boolean setOption(Option<T> option, T value) {
                 validate(option, value);
 
-                if (option == JOption.SO_RCVBUF) {
+                if (option == Option.SO_RCVBUF) {
                     setRcvBuf(castToInteger(value));
-                } else if (option == JOption.SO_SNDBUF) {
+                } else if (option == Option.SO_SNDBUF) {
                     setSndBuf(castToInteger(value));
-                } else if (option == JOption.SO_LINGER) {
+                } else if (option == Option.SO_LINGER) {
                     setLinger(castToInteger(value));
-                } else if (option == JOption.IP_TOS) {
+                } else if (option == Option.IP_TOS) {
                     setIpTos(castToInteger(value));
-                } else if (option == JOption.CONNECT_TIMEOUT_MILLIS) {
+                } else if (option == Option.CONNECT_TIMEOUT_MILLIS) {
                     setConnectTimeoutMillis(castToInteger(value));
-                } else if (option == JOption.WRITE_BUFFER_HIGH_WATER_MARK) {
+                } else if (option == Option.WRITE_BUFFER_HIGH_WATER_MARK) {
                     setWriteBufferHighWaterMark(castToInteger(value));
-                } else if (option == JOption.WRITE_BUFFER_LOW_WATER_MARK) {
+                } else if (option == Option.WRITE_BUFFER_LOW_WATER_MARK) {
                     setWriteBufferLowWaterMark(castToInteger(value));
-                } else if (option == JOption.SO_REUSEADDR) {
+                } else if (option == Option.SO_REUSEADDR) {
                     setReuseAddress(castToBoolean(value));
-                } else if (option == JOption.KEEP_ALIVE) {
+                } else if (option == Option.KEEP_ALIVE) {
                     setKeepAlive(castToBoolean(value));
-                } else if (option == JOption.TCP_NODELAY) {
+                } else if (option == Option.TCP_NODELAY) {
                     setTcpNoDelay(castToBoolean(value));
-                } else if (option == JOption.ALLOW_HALF_CLOSURE) {
+                } else if (option == Option.ALLOW_HALF_CLOSURE) {
                     setAllowHalfClosure(castToBoolean(value));
-                } else if (option == JOption.TCP_NOTSENT_LOWAT) {
+                } else if (option == Option.TCP_NOTSENT_LOWAT) {
                     setTcpNotSentLowAt(castToLong(value));
-                } else if (option == JOption.TCP_KEEPIDLE) {
+                } else if (option == Option.TCP_KEEPIDLE) {
                     setTcpKeepIdle(castToInteger(value));
-                } else if (option == JOption.TCP_KEEPCNT) {
+                } else if (option == Option.TCP_KEEPCNT) {
                     setTcpKeepCnt(castToInteger(value));
-                } else if (option == JOption.TCP_KEEPINTVL) {
+                } else if (option == Option.TCP_KEEPINTVL) {
                     setTcpKeepInterval(castToInteger(value));
-                } else if (option == JOption.TCP_USER_TIMEOUT) {
+                } else if (option == Option.TCP_USER_TIMEOUT) {
                     setTcpUserTimeout(castToInteger(value));
-                } else if (option == JOption.IP_TRANSPARENT) {
+                } else if (option == Option.IP_TRANSPARENT) {
                     setIpTransparent(castToBoolean(value));
-                } else if (option == JOption.EDGE_TRIGGERED) {
+                } else if (option == Option.EDGE_TRIGGERED) {
                     setEdgeTriggered(castToBoolean(value));
-                } else if (option == JOption.TCP_CORK) {
+                } else if (option == Option.TCP_CORK) {
                     setTcpCork(castToBoolean(value));
-                } else if (option == JOption.TCP_QUICKACK) {
+                } else if (option == Option.TCP_QUICKACK) {
                     setTcpQuickAck(castToBoolean(value));
-                } else if (option == JOption.TCP_FASTOPEN_CONNECT) {
+                } else if (option == Option.TCP_FASTOPEN_CONNECT) {
                     setTcpFastOpenConnect(castToBoolean(value));
                 } else {
                     return super.setOption(option, value);
@@ -701,7 +701,7 @@ public class NettyConfig implements JConfig {
     /**
      * Unix domain socket option
      */
-    public static class NettyDomainConfigGroup implements JConfigGroup {
+    public static class NettyDomainConfigGroup implements ConfigGroup {
 
         private ParentConfig parent = new ParentConfig();
         private ChildConfig child = new ChildConfig();
@@ -731,14 +731,14 @@ public class NettyConfig implements JConfig {
             private volatile int writeBufferLowWaterMark = -1;
 
             @Override
-            public List<JOption<?>> getOptions() {
+            public List<Option<?>> getOptions() {
                 return getOptions(super.getOptions(),
-                        JOption.CONNECT_TIMEOUT_MILLIS,
-                        JOption.WRITE_BUFFER_HIGH_WATER_MARK,
-                        JOption.WRITE_BUFFER_LOW_WATER_MARK);
+                        Option.CONNECT_TIMEOUT_MILLIS,
+                        Option.WRITE_BUFFER_HIGH_WATER_MARK,
+                        Option.WRITE_BUFFER_LOW_WATER_MARK);
             }
 
-            protected List<JOption<?>> getOptions(List<JOption<?>> result, JOption<?>... options) {
+            protected List<Option<?>> getOptions(List<Option<?>> result, Option<?>... options) {
                 if (result == null) {
                     result = Lists.newArrayList();
                 }
@@ -748,16 +748,16 @@ public class NettyConfig implements JConfig {
 
             @SuppressWarnings("unchecked")
             @Override
-            public <T> T getOption(JOption<T> option) {
+            public <T> T getOption(Option<T> option) {
                 Requires.requireNotNull(option);
 
-                if (option == JOption.CONNECT_TIMEOUT_MILLIS) {
+                if (option == Option.CONNECT_TIMEOUT_MILLIS) {
                     return (T) Integer.valueOf(getConnectTimeoutMillis());
                 }
-                if (option == JOption.WRITE_BUFFER_HIGH_WATER_MARK) {
+                if (option == Option.WRITE_BUFFER_HIGH_WATER_MARK) {
                     return (T) Integer.valueOf(getWriteBufferHighWaterMark());
                 }
-                if (option == JOption.WRITE_BUFFER_LOW_WATER_MARK) {
+                if (option == Option.WRITE_BUFFER_LOW_WATER_MARK) {
                     return (T) Integer.valueOf(getWriteBufferLowWaterMark());
                 }
 
@@ -765,14 +765,14 @@ public class NettyConfig implements JConfig {
             }
 
             @Override
-            public <T> boolean setOption(JOption<T> option, T value) {
+            public <T> boolean setOption(Option<T> option, T value) {
                 validate(option, value);
 
-                if (option == JOption.CONNECT_TIMEOUT_MILLIS) {
+                if (option == Option.CONNECT_TIMEOUT_MILLIS) {
                     setConnectTimeoutMillis(castToInteger(value));
-                } else if (option == JOption.WRITE_BUFFER_HIGH_WATER_MARK) {
+                } else if (option == Option.WRITE_BUFFER_HIGH_WATER_MARK) {
                     setWriteBufferHighWaterMark(castToInteger(value));
-                } else if (option == JOption.WRITE_BUFFER_LOW_WATER_MARK) {
+                } else if (option == Option.WRITE_BUFFER_LOW_WATER_MARK) {
                     setWriteBufferLowWaterMark(castToInteger(value));
                 } else {
                     return super.setOption(option, value);

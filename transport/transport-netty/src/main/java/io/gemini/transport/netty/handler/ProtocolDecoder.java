@@ -19,7 +19,6 @@ import io.gemini.common.util.Signal;
 import io.gemini.common.util.SystemPropertyUtil;
 import io.gemini.transport.TransportProtocol;
 import io.gemini.transport.exception.IoSignals;
-import io.gemini.transport.payload.JMessagePayload;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ReplayingDecoder;

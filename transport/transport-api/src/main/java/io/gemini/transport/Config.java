@@ -12,22 +12,22 @@ import java.util.List;
  *
  * @author jiachun.fjc
  */
-public interface JConfig {
+public interface Config {
 
     /**
-     * Return all set {@link JOption}'s.
+     * Return all set {@link Option}'s.
      */
-    List<JOption<?>> getOptions();
+    List<Option<?>> getOptions();
 
     /**
-     * Return the value of the given {@link JOption}.
+     * Return the value of the given {@link Option}.
      */
-    <T> T getOption(JOption<T> option);
+    <T> T getOption(Option<T> option);
 
     /**
      * Sets a configuration property with the specified name and value.
      *
      * @return {@code true} if and only if the property has been set
      */
-    <T> boolean setOption(JOption<T> option, T value);
+    <T> boolean setOption(Option<T> option, T value);
 }

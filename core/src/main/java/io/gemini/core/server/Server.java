@@ -3,7 +3,7 @@ package io.gemini.core.server;
 import io.gemini.registry.RegisterMeta;
 import io.gemini.registry.Registry;
 import io.gemini.registry.RegistryService;
-import io.gemini.transport.JAcceptor;
+import io.gemini.transport.Acceptor;
 
 
 /**
@@ -54,12 +54,12 @@ public interface Server extends Registry {
     /**
      * 网络层acceptor.
      */
-    JAcceptor acceptor();
+    Acceptor acceptor();
 
     /**
      * 设置网络层acceptor.
      */
-    Server withAcceptor(JAcceptor acceptor);
+    Server withAcceptor(Acceptor acceptor);
 
     /**
      * 启动gemini core im server, 以同步阻塞的方式启动.

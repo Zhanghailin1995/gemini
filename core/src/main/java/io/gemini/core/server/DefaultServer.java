@@ -4,7 +4,7 @@ package io.gemini.core.server;
 import io.gemini.common.util.ServiceLoader;
 import io.gemini.registry.RegisterMeta;
 import io.gemini.registry.RegistryService;
-import io.gemini.transport.JAcceptor;
+import io.gemini.transport.Acceptor;
 
 public class DefaultServer implements Server {
 
@@ -25,7 +25,7 @@ public class DefaultServer implements Server {
 
 
     // IO acceptor
-    private JAcceptor acceptor;
+    private Acceptor acceptor;
 
     @Override
     public RegistryService registryService() {
@@ -43,12 +43,12 @@ public class DefaultServer implements Server {
     }
 
     @Override
-    public JAcceptor acceptor() {
+    public Acceptor acceptor() {
         return acceptor;
     }
 
     @Override
-    public Server withAcceptor(JAcceptor acceptor) {
+    public Server withAcceptor(Acceptor acceptor) {
         this.acceptor = acceptor;
         return this;
     }

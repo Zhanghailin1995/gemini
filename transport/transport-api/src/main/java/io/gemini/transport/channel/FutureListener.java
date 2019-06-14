@@ -3,14 +3,14 @@ package io.gemini.transport.channel;
 import java.util.EventListener;
 
 /**
- * Listen on {@link JChannel}'s event.
+ * Listen on {@link Chan}'s event.
  *
  * gemini
- * io.gemini.transport.channel.JChannel
+ * io.gemini.transport.channel.Chan
  *
  * @author zhanghailin
  */
-public interface JFutureListener<C> extends EventListener {
+public interface FutureListener<C> extends EventListener {
 
     void operationSuccess(C c) throws Exception;
 

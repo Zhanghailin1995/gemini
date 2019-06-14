@@ -1,14 +1,31 @@
+/*
+ * Copyright (c) 2015 The Jupiter Project
+ *
+ * Licensed under the Apache License, version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at:
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.gemini.transport.payload;
 
 import io.gemini.common.util.LongSequence;
 
 /**
- * gemini
- * io.gemini.transport.payload.JMessagePayload
+ * 请求的消息体bytes/stream载体, 避免在IO线程中序列化/反序列化, jupiter-transport这一层不关注消息体的对象结构.
  *
- * @author zhanghailin
+ * jupiter
+ * org.jupiter.transport.payload
+ *
+ * @author jiachun.fjc
  */
-public class JMessagePayload extends PayloadHolder {
+public class RequestPayload extends PayloadHolder {
 
     // 请求id自增器, 用于映射 <id, request, response> 三元组
     //
@@ -21,14 +38,14 @@ public class JMessagePayload extends PayloadHolder {
 
     // 用于映射 <id, request, response> 三元组
     private final long invokeId;
-    // transport层会在协议解析完成后打上一个时间戳, 用于后续监控对该请求的处理时间
+    // jupiter-transport层会在协议解析完成后打上一个时间戳, 用于后续监控对该请求的处理时间
     private transient long timestamp;
 
-    public JMessagePayload() {
+    public RequestPayload() {
         this(sequence.next());
     }
 
-    public JMessagePayload(long invokeId) {
+    public RequestPayload(long invokeId) {
         this.invokeId = invokeId;
     }
 

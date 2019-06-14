@@ -17,7 +17,6 @@ package io.gemini.common.util;
 
 import io.gemini.common.util.internal.UnsafeReferenceFieldUpdater;
 import io.gemini.common.util.internal.UnsafeUpdater;
-import io.gemini.common.util.internal.UnsafeUtil;
 import sun.misc.Unsafe;
 
 /**

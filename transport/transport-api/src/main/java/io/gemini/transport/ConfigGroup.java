@@ -12,15 +12,15 @@ package io.gemini.transport;
  *
  * @author jiachun.fjc
  */
-public interface JConfigGroup {
+public interface ConfigGroup {
 
     /**
      * Config for parent.
      */
-    JConfig parent();
+    Config parent();
 
     /**
      * Config for child.
      */
-    JConfig child();
+    Config child();
 }

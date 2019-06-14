@@ -4,9 +4,7 @@ import com.google.common.base.Throwables;
 import io.gemini.core.executor.CloseableExecutor;
 import io.gemini.core.processor.task.MessageExecutors;
 import io.gemini.core.processor.task.MessageTask;
-import io.gemini.transport.channel.JChannel;
-import io.gemini.transport.payload.JMessagePayload;
-import io.gemini.transport.processor.MessageProcessor;
+import io.gemini.transport.channel.Chan;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -32,7 +30,7 @@ public class DefaultMessageProcessor implements MessageProcessor {
     }
 
     @Override
-    public void handleMessage(JChannel channel, JMessagePayload message) throws Exception {
+    public void handleMessage(Chan channel, JMessagePayload message) throws Exception {
         MessageTask task = new MessageTask(channel, this, message);
         if (executor == null) {
             task.run();
@@ -42,7 +40,7 @@ public class DefaultMessageProcessor implements MessageProcessor {
     }
 
     @Override
-    public void handleException(JChannel channel, JMessagePayload message, Throwable cause) {
+    public void handleException(Chan channel, JMessagePayload message, Throwable cause) {
         log.error("An exception was caught while processing request: {}, {}.",
                 channel.remoteAddress(), Throwables.getStackTraceAsString(cause));
 

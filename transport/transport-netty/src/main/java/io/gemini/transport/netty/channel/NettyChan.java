@@ -17,7 +17,7 @@ package io.gemini.transport.netty.channel;
 
 import io.gemini.serialization.io.OutputBuf;
 import io.gemini.transport.TransportProtocol;
-import io.gemini.transport.channel.JChannel;
+import io.gemini.transport.channel.Chan;
 import io.gemini.transport.netty.alloc.AdaptiveOutputBufAllocator;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
@@ -32,27 +32,26 @@ import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 
 /**
- * 对Netty {@link Channel} 的包装, 通过静态方法 {@link #attachChannel(ChannelHandlerContext)} 获取一个实例,
- * {@link NettyChannel} 实例构造后会attach到对应 {@link Channel} 上, 不需要每次创建.
+ * 对Netty {@link Channel} 的包装, 通过静态方法 {@link #attachChannel(Channel)} 获取一个实例,
+ * {@link NettyChan} 实例构造后会attach到对应 {@link Channel} 上, 不需要每次创建.
  * <p>
  * jupiter
  * org.jupiter.transport.netty.channel
  *
  * @author jiachun.fjc
  */
-public class NettyChannel implements JChannel {
+public class NettyChan implements Chan {
 
-    private static final AttributeKey<NettyChannel> NETTY_CHANNEL_KEY = AttributeKey.valueOf("netty.channel");
+    private static final AttributeKey<NettyChan> NETTY_CHANNEL_KEY = AttributeKey.valueOf("netty.channel");
 
     /**
-     * Returns the {@link NettyChannel} for given {@link ChannelHandlerContext}, this method never return null.
+     * Returns the {@link NettyChan} for given {@link ChannelHandlerContext}, this method never return null.
      */
-    public static NettyChannel attachChannel(ChannelHandlerContext ctx) {
-        Channel channel = ctx.channel();
-        Attribute<NettyChannel> attr = channel.attr(NETTY_CHANNEL_KEY);
-        NettyChannel nChannel = attr.get();
+    public static NettyChan attachChannel(Channel channel) {
+        Attribute<NettyChan> attr = channel.attr(NETTY_CHANNEL_KEY);
+        NettyChan nChannel = attr.get();
         if (nChannel == null) {
-            NettyChannel newNChannel = new NettyChannel(ctx);
+            NettyChan newNChannel = new NettyChan(channel);
             nChannel = attr.setIfAbsent(newNChannel);
             if (nChannel == null) {
                 nChannel = newNChannel;
@@ -62,18 +61,14 @@ public class NettyChannel implements JChannel {
     }
 
 
-    private final ChannelHandlerContext ctx;
+    private final Channel channel;
 
-    private NettyChannel(ChannelHandlerContext ctx) {
-        this.ctx = ctx;
-    }
-
-    public ChannelHandlerContext ctx() {
-        return ctx;
+    private NettyChan(Channel channel) {
+        this.channel = channel;
     }
 
     public Channel channel() {
-        return this.ctx().channel();
+        return this.channel;
     }
 
     @Override
@@ -97,12 +92,12 @@ public class NettyChannel implements JChannel {
     }
 
     @Override
-    public JChannel close() {
+    public Chan close() {
         return null;
     }
 
     @Override
-    public JChannel write(Object msg) {
+    public Chan write(Object msg) {
         return null;
     }
 

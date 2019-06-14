@@ -13,44 +13,44 @@ import java.util.Set;
  * jupiter
  * org.jupiter.transport
  *
- * @param <T> the type of the value which is valid for the {@link JOption}
+ * @param <T> the type of the value which is valid for the {@link Option}
  * @author jiachun.fjc
  */
 @SuppressWarnings("all")
-public final class JOption<T> extends AbstractConstant<JOption<T>> {
+public final class Option<T> extends AbstractConstant<Option<T>> {
 
-    private static final ConstantPool<JOption<Object>> pool = new ConstantPool<JOption<Object>>() {
+    private static final ConstantPool<Option<Object>> pool = new ConstantPool<Option<Object>>() {
 
         @Override
-        protected JOption<Object> newConstant(int id, String name) {
-            return new JOption<>(id, name);
+        protected Option<Object> newConstant(int id, String name) {
+            return new Option<>(id, name);
         }
     };
 
     /**
-     * Returns the {@link JOption} of the specified name.
+     * Returns the {@link Option} of the specified name.
      */
-    public static <T> JOption<T> valueOf(String name) {
-        return (JOption<T>) pool.valueOf(name);
+    public static <T> Option<T> valueOf(String name) {
+        return (Option<T>) pool.valueOf(name);
     }
 
     /**
      * Shortcut of {@link #valueOf(String) valueOf(firstNameComponent.getName() + "#" + secondNameComponent)}.
      */
-    public static <T> JOption<T> valueOf(Class<?> firstNameComponent, String secondNameComponent) {
-        return (JOption<T>) pool.valueOf(firstNameComponent, secondNameComponent);
+    public static <T> Option<T> valueOf(Class<?> firstNameComponent, String secondNameComponent) {
+        return (Option<T>) pool.valueOf(firstNameComponent, secondNameComponent);
     }
 
     /**
-     * Creates a new {@link JOption} for the given {@param name} or fail with an
-     * {@link IllegalArgumentException} if a {@link JOption} for the given {@param name} exists.
+     * Creates a new {@link Option} for the given {@param name} or fail with an
+     * {@link IllegalArgumentException} if a {@link Option} for the given {@param name} exists.
      */
-    public static <T> JOption<T> newInstance(String name) {
-        return (JOption<T>) pool.newInstance(name);
+    public static <T> Option<T> newInstance(String name) {
+        return (Option<T>) pool.newInstance(name);
     }
 
     /**
-     * Returns {@code true} if a {@link JOption} exists for the given {@code name}.
+     * Returns {@code true} if a {@link Option} exists for the given {@code name}.
      */
     public static boolean exists(String name) {
         return pool.exists(name);
@@ -59,7 +59,7 @@ public final class JOption<T> extends AbstractConstant<JOption<T>> {
     /**
      * 对此连接禁用Nagle算法.
      */
-    public static final JOption<Boolean> TCP_NODELAY = valueOf("TCP_NODELAY");
+    public static final Option<Boolean> TCP_NODELAY = valueOf("TCP_NODELAY");
 
     /**
      * 为TCP套接字设置keepalive选项时, 如果在2个小时（实际值与具体实现有关）内在
@@ -76,7 +76,7 @@ public final class JOption<T> extends AbstractConstant<JOption<T>> {
      *
      * 此选项的目的是检测对端主机是否崩溃, 仅对TCP套接字有效.
      */
-    public static final JOption<Boolean> KEEP_ALIVE = valueOf("KEEP_ALIVE");
+    public static final Option<Boolean> KEEP_ALIVE = valueOf("KEEP_ALIVE");
 
     /**
      * [TCP/IP协议详解]中描述:
@@ -88,21 +88,21 @@ public final class JOption<T> extends AbstractConstant<JOption<T>> {
      * 许多具体的实现中允许一个进程重新使用仍处于2MSL等待的端口(通常是设置选项SO_REUSEADDR),
      * 但TCP不能允许一个新的连接建立在相同的插口对上。
      */
-    public static final JOption<Boolean> SO_REUSEADDR = valueOf("SO_REUSEADDR");
+    public static final Option<Boolean> SO_REUSEADDR = valueOf("SO_REUSEADDR");
 
     /**
      * 设置snd_buf
      * 一般对于要建立大量连接的应用, 不建议设置这个值, 因为linux内核对snd_buf的大小是动态调整的, 内核是很聪明的.
      */
-    public static final JOption<Integer> SO_SNDBUF = valueOf("SO_SNDBUF");
+    public static final Option<Integer> SO_SNDBUF = valueOf("SO_SNDBUF");
 
     /**
      * 设置rcv_buf
      * 一般对于要建立大量连接的应用, 不建议设置这个值, 因为linux内核对rcv_buf的大小是动态调整的.
      */
-    public static final JOption<Integer> SO_RCVBUF = valueOf("SO_RCVBUF");
+    public static final Option<Integer> SO_RCVBUF = valueOf("SO_RCVBUF");
 
-    public static final JOption<Integer> SO_LINGER = valueOf("SO_LINGER");
+    public static final Option<Integer> SO_LINGER = valueOf("SO_LINGER");
 
     /**
      * 在linux内核中TCP握手过程总共会有两个队列:
@@ -136,7 +136,7 @@ public final class JOption<T> extends AbstractConstant<JOption<T>> {
      * 还有一点要注意, 对于TCP连接的ESTABLISHED状态, 并不需要应用层accept,
      * 只要在accept queue里就已经变成状态ESTABLISHED, 所以在使用ss或netstat排查这方面问题不要被ESTABLISHED迷惑.
      */
-    public static final JOption<Integer> SO_BACKLOG = valueOf("SO_BACKLOG");
+    public static final Option<Integer> SO_BACKLOG = valueOf("SO_BACKLOG");
 
     /**
      * Set or receive the Type-Of-Service (TOS) field that is sent with every IP packet originating from this socket.
@@ -148,38 +148,38 @@ public final class JOption<T> extends AbstractConstant<JOption<T>> {
      * but the exact behavior depends on the configured queueing discipline.  Some high-priority levels may require
      * superuser privileges (the CAP_NET_ADMIN capability).
      */
-    public static final JOption<Integer> IP_TOS = valueOf("IP_TOS");
+    public static final Option<Integer> IP_TOS = valueOf("IP_TOS");
 
-    public static final JOption<Boolean> ALLOW_HALF_CLOSURE = valueOf("ALLOW_HALF_CLOSURE");
+    public static final Option<Boolean> ALLOW_HALF_CLOSURE = valueOf("ALLOW_HALF_CLOSURE");
 
     /**
      * 是否使用 direct buffer.
      */
-    public static final JOption<Boolean> PREFER_DIRECT = valueOf("PREFER_DIRECT");
+    public static final Option<Boolean> PREFER_DIRECT = valueOf("PREFER_DIRECT");
 
     /**
      * Netty的选项, 是否启用pooled buf allocator.不在代码中控制，启动参数中可以添加-Dio.netty.allocator.type
      */
-    public static final JOption<Boolean> USE_POOLED_ALLOCATOR = valueOf("USE_POOLED_ALLOCATOR");
+    public static final Option<Boolean> USE_POOLED_ALLOCATOR = valueOf("USE_POOLED_ALLOCATOR");
 
     /**
      * Netty的选项, write高水位线.
      */
-    public static final JOption<Integer> WRITE_BUFFER_HIGH_WATER_MARK = valueOf("WRITE_BUFFER_HIGH_WATER_MARK");
+    public static final Option<Integer> WRITE_BUFFER_HIGH_WATER_MARK = valueOf("WRITE_BUFFER_HIGH_WATER_MARK");
 
     /**
      * Netty的选项, write低水位线.
      */
-    public static final JOption<Integer> WRITE_BUFFER_LOW_WATER_MARK = valueOf("WRITE_BUFFER_LOW_WATER_MARK");
+    public static final Option<Integer> WRITE_BUFFER_LOW_WATER_MARK = valueOf("WRITE_BUFFER_LOW_WATER_MARK");
 
     /**
      * Sets the percentage of the desired amount of time spent for I/O in the child event loops.
      * The default value is {@code 50}, which means the event loop will try to spend the same
      * amount of time for I/O as for non-I/O tasks.
      */
-    public static final JOption<Integer> IO_RATIO = valueOf("IO_RATIO");
+    public static final Option<Integer> IO_RATIO = valueOf("IO_RATIO");
 
-    public static final JOption<Integer> CONNECT_TIMEOUT_MILLIS = valueOf("CONNECT_TIMEOUT_MILLIS");
+    public static final Option<Integer> CONNECT_TIMEOUT_MILLIS = valueOf("CONNECT_TIMEOUT_MILLIS");
 
     /** ==== Netty native epoll options ============================================================================ */
 
@@ -189,7 +189,7 @@ public final class JOption<T> extends AbstractConstant<JOption<T>> {
      *
      * Be aware this method needs be called before channel#bind to have any affect.
      */
-    public static final JOption<Boolean> SO_REUSEPORT = valueOf("SO_REUSEPORT");
+    public static final Option<Boolean> SO_REUSEPORT = valueOf("SO_REUSEPORT");
 
     /**
      * If set, don't send out partial frames. All queued partial frames are sent when the option is cleared again.
@@ -200,28 +200,28 @@ public final class JOption<T> extends AbstractConstant<JOption<T>> {
      * This option can be combined with TCP_NODELAY only since Linux 2.5.71.
      * This option should not be used in code intended to be portable.
      */
-    public static final JOption<Boolean> TCP_CORK = valueOf("TCP_CORK");
+    public static final Option<Boolean> TCP_CORK = valueOf("TCP_CORK");
 
-    public static final JOption<Long> TCP_NOTSENT_LOWAT = valueOf("TCP_NOTSENT_LOWAT");
+    public static final Option<Long> TCP_NOTSENT_LOWAT = valueOf("TCP_NOTSENT_LOWAT");
 
     /**
      * The time (in seconds) the connection needs to remain idle before TCP starts sending keepalive probes,
      * if the socket option SO_KEEPALIVE has been set on this socket.
      * This option should not be used in code intended to be portable.
      */
-    public static final JOption<Integer> TCP_KEEPIDLE = valueOf("TCP_KEEPIDLE");
+    public static final Option<Integer> TCP_KEEPIDLE = valueOf("TCP_KEEPIDLE");
 
     /**
      * The time (in seconds) between individual keepalive probes.
      * This option should not be used in code intended to be portable.
      */
-    public static final JOption<Integer> TCP_KEEPINTVL = valueOf("TCP_KEEPINTVL");
+    public static final Option<Integer> TCP_KEEPINTVL = valueOf("TCP_KEEPINTVL");
 
     /**
      * The maximum number of keepalive probes TCP should send before dropping the connection.
      * This option should not be used in code intended to be portable.
      */
-    public static final JOption<Integer> TCP_KEEPCNT = valueOf("TCP_KEEPCNT");
+    public static final Option<Integer> TCP_KEEPCNT = valueOf("TCP_KEEPCNT");
 
     /**
      * This option takes an unsigned int as an argument.  When the value is greater than 0,
@@ -247,7 +247,7 @@ public final class JOption<T> extends AbstractConstant<JOption<T>> {
      * Further details on the user timeout feature can be found in
      * RFC 793 and RFC 5482 ("TCP User Timeout Option").
      */
-    public static final JOption<Integer> TCP_USER_TIMEOUT = valueOf("TCP_USER_TIMEOUT");
+    public static final Option<Integer> TCP_USER_TIMEOUT = valueOf("TCP_USER_TIMEOUT");
 
     /**
      * If enabled, this boolean option allows binding to an IP address that is nonlocal or does not (yet) exist.
@@ -255,7 +255,7 @@ public final class JOption<T> extends AbstractConstant<JOption<T>> {
      * the specified dynamic IP address to be up at the time that the application is trying to bind to it.
      * This option is the per-socket equivalent of the ip_nonlo‐cal_bind /proc interface described below.
      */
-    public static final JOption<Boolean> IP_FREEBIND = valueOf("IP_FREEBIND");
+    public static final Option<Boolean> IP_FREEBIND = valueOf("IP_FREEBIND");
 
     /**
      * Setting this boolean option enables transparent proxying on this socket.
@@ -265,7 +265,7 @@ public final class JOption<T> extends AbstractConstant<JOption<T>> {
      * TProxy box (i.e., the system hosting the application that employs the IP_TRANSPARENT socket option).
      * Enabling this socket option requires superuser privileges (the CAP_NET_ADMIN capability).
      */
-    public static final JOption<Boolean> IP_TRANSPARENT = valueOf("IP_TRANSPARENT");
+    public static final Option<Boolean> IP_TRANSPARENT = valueOf("IP_TRANSPARENT");
 
     /**
      * Enables tcpFastOpen on the server channel. If the underlying os doesnt support TCP_FASTOPEN setting this has no
@@ -273,7 +273,7 @@ public final class JOption<T> extends AbstractConstant<JOption<T>> {
      *
      * @see <a href="https://tools.ietf.org/html/rfc7413">RFC 7413 TCP FastOpen</a>
      */
-    public static final JOption<Integer> TCP_FASTOPEN = valueOf("TCP_FASTOPEN");
+    public static final Option<Integer> TCP_FASTOPEN = valueOf("TCP_FASTOPEN");
 
     /**
      * Set the {@code TCP_FASTOPEN_CONNECT} option on the socket. Requires Linux kernel 4.11 or later.
@@ -281,7 +281,7 @@ public final class JOption<T> extends AbstractConstant<JOption<T>> {
      * <a href="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=19f6d3f3">this commit</a>
      * for more details.
      */
-    public static final JOption<Boolean> TCP_FASTOPEN_CONNECT = valueOf("TCP_FASTOPEN_CONNECT");
+    public static final Option<Boolean> TCP_FASTOPEN_CONNECT = valueOf("TCP_FASTOPEN_CONNECT");
 
     /**
      * Allow a listener to be awakened only when data arrives on the socket.
@@ -289,7 +289,7 @@ public final class JOption<T> extends AbstractConstant<JOption<T>> {
      * attempts TCP will make to complete the connection.
      * This option should not be used in code intended to be portable.
      */
-    public static final JOption<Integer> TCP_DEFER_ACCEPT = valueOf("TCP_DEFER_ACCEPT");
+    public static final Option<Integer> TCP_DEFER_ACCEPT = valueOf("TCP_DEFER_ACCEPT");
 
     /**
      * Enable quickack mode if set or disable quickack mode if cleared.
@@ -302,7 +302,7 @@ public final class JOption<T> extends AbstractConstant<JOption<T>> {
      * TCP_QUICKACK不是永久的, 所以TCP_QUICKACK选项应该是需要在每次调用recv后重新设置的
      * Netty代码的实现可能忽略了这个问题(只设置了一次)
      */
-    public static final JOption<Boolean> TCP_QUICKACK = valueOf("TCP_QUICKACK");
+    public static final Option<Boolean> TCP_QUICKACK = valueOf("TCP_QUICKACK");
 
     /**
      * Default is EDGE_TRIGGERED. If you want to use #isAutoRead() {@code false} or #getMaxMessagesPerRead()
@@ -310,16 +310,16 @@ public final class JOption<T> extends AbstractConstant<JOption<T>> {
      *
      * Be aware this config setting can only be adjusted before the channel was registered.
      */
-    public static final JOption<Boolean> EDGE_TRIGGERED = valueOf("EDGE_TRIGGERED");
+    public static final Option<Boolean> EDGE_TRIGGERED = valueOf("EDGE_TRIGGERED");
 
     /**
      * ==== Netty native epoll options ============================================================================
      */
 
-    public static final Set<JOption<?>> ALL_OPTIONS;
+    public static final Set<Option<?>> ALL_OPTIONS;
 
     static {
-        Set<JOption<?>> options = new HashSet<>();
+        Set<Option<?>> options = new HashSet<>();
 
         options.add(TCP_NODELAY);
         options.add(KEEP_ALIVE);
@@ -352,7 +352,7 @@ public final class JOption<T> extends AbstractConstant<JOption<T>> {
         ALL_OPTIONS = Collections.unmodifiableSet(options);
     }
 
-    private JOption(int id, String name) {
+    private Option(int id, String name) {
         super(id, name);
     }
 }

@@ -2,11 +2,11 @@ package io.gemini.transport;
 
 /**
  * gemini
- * io.gemini.transport.netty.Transpoter
+ * io.gemini.transport.netty.Transporter
  *
  * @author zhanghailin
  */
-public interface Transpoter {
+public interface Transporter {
 
     /**
      * Returns the transport protocol

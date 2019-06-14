@@ -16,7 +16,6 @@
 package io.gemini.transport.netty.handler;
 
 import io.gemini.transport.TransportProtocol;
-import io.gemini.transport.payload.JMessagePayload;
 import io.gemini.transport.payload.PayloadHolder;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandler;

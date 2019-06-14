@@ -1,11 +1,11 @@
 package io.gemini.transport.netty;
 
 import io.gemini.common.contants.Constants;
-import io.gemini.transport.JAcceptor;
-import io.gemini.transport.JConfig;
-import io.gemini.transport.JOption;
+import io.gemini.transport.Acceptor;
+import io.gemini.transport.Config;
+import io.gemini.transport.Option;
 import io.gemini.transport.netty.estimator.JMessageSizeEstimator;
-import io.gemini.transport.processor.MessageProcessor;
+import io.gemini.transport.processor.ProviderProcessor;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
@@ -24,12 +24,13 @@ import java.util.concurrent.ThreadFactory;
  *
  * @author zhanghailin
  */
-public abstract class NettyAcceptor implements JAcceptor {
+public abstract class NettyAcceptor implements Acceptor {
 
 
     protected final Protocol protocol;
     protected final SocketAddress localAddress;
 
+    // use netty ThreadFactory FastThreadLocal
     protected final HashedWheelTimer timer = new HashedWheelTimer(new DefaultThreadFactory("acceptor.timer", true));
 
     private final int nBosses;
@@ -39,8 +40,7 @@ public abstract class NettyAcceptor implements JAcceptor {
     private EventLoopGroup boss;
     private EventLoopGroup worker;
 
-    private MessageProcessor processor;
-
+    private ProviderProcessor processor;
 
     public NettyAcceptor(Protocol protocol, SocketAddress localAddress) {
         this(protocol, localAddress, Constants.AVAILABLE_PROCESSORS << 1);
@@ -66,12 +66,12 @@ public abstract class NettyAcceptor implements JAcceptor {
         bootstrap = new ServerBootstrap().group(boss, worker);
 
         // parent options
-        JConfig parent = configGroup().parent();
-        parent.setOption(JOption.IO_RATIO, 100);
+        Config parent = configGroup().parent();
+        parent.setOption(Option.IO_RATIO, 100);
 
         // child options
-        JConfig child = configGroup().child();
-        child.setOption(JOption.IO_RATIO, 100);
+        Config child = configGroup().child();
+        child.setOption(Option.IO_RATIO, 100);
     }
 
     @Override
@@ -104,12 +104,12 @@ public abstract class NettyAcceptor implements JAcceptor {
     }
 
     @Override
-    public MessageProcessor processor() {
+    public ProviderProcessor processor() {
         return processor;
     }
 
     @Override
-    public void withProcessor(MessageProcessor processor) {
+    public void withProcessor(ProviderProcessor processor) {
         setProcessor(this.processor = processor);
     }
 
@@ -118,14 +118,17 @@ public abstract class NettyAcceptor implements JAcceptor {
         boss.shutdownGracefully().syncUninterruptibly();
         worker.shutdownGracefully().syncUninterruptibly();
         timer.stop();
-        processor.shutdown();
+        if (processor != null) {
+            processor.shutdown();
+        }
     }
 
     protected void setOptions() {
-        JConfig parent = configGroup().parent(); // parent options
-        JConfig child = configGroup().child(); // child options
+        Config parent = configGroup().parent(); // parent options
+        Config child = configGroup().child(); // child options
 
-        setIoRatio(parent.getOption(JOption.IO_RATIO), child.getOption(JOption.IO_RATIO));
+        // 为什么要把io ratio单独拿出来呢?
+        setIoRatio(parent.getOption(Option.IO_RATIO), child.getOption(Option.IO_RATIO));
 
         bootstrap.childOption(ChannelOption.MESSAGE_SIZE_ESTIMATOR, JMessageSizeEstimator.DEFAULT);
     }
@@ -167,7 +170,7 @@ public abstract class NettyAcceptor implements JAcceptor {
         return waterMark;
     }
 
-    protected abstract void setProcessor(MessageProcessor processor);
+    protected abstract void setProcessor(ProviderProcessor processor);
 
     /**
      * Sets the percentage of the desired amount of time spent for I/O in the child event loops.

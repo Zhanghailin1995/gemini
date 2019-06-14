@@ -5,7 +5,6 @@ import io.gemini.core.autoconfigure.property.GeminiProperties;
 import io.gemini.core.processor.DefaultMessageProcessor;
 import io.gemini.core.server.DefaultServer;
 import io.gemini.core.server.Server;
-import io.gemini.transport.processor.MessageProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,9 +29,9 @@ public class ServerAutoConfiguration {
         SimpleNettyTcpAcceptor acceptor = new SimpleNettyTcpAcceptor(properties.getPort());
         //TODO 网络层配置
         /**
-         * JConfigGroup configGroup = acceptor.configGroup();
-         * JConfig parent = configGroup.parent();
-         * parent.setOption(JOption<T> option, T value);
+         * ConfigGroup configGroup = acceptor.configGroup();
+         * Config parent = configGroup.parent();
+         * parent.setOption(Option<T> option, T value);
          */
         acceptor.withProcessor(processor());
         server.withAcceptor(acceptor);

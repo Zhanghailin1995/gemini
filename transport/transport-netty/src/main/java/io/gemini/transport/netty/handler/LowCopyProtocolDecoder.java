@@ -19,7 +19,6 @@ import io.gemini.common.util.Signal;
 import io.gemini.serialization.io.InputBuf;
 import io.gemini.transport.TransportProtocol;
 import io.gemini.transport.exception.IoSignals;
-import io.gemini.transport.payload.JMessagePayload;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.channel.ChannelHandlerContext;
