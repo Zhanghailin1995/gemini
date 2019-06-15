@@ -9,11 +9,11 @@
     <packaging>pom</packaging>
     <version>0.0.1-SNAPSHOT</version>
     <modules>
-        <module>core</module>
         <module>common</module>
         <module>transport</module>
         <module>serialization</module>
         <module>registry</module>
+        <module>rpc</module>
     </modules>
 
     <name>Gemini</name>

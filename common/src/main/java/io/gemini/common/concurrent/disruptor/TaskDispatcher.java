@@ -18,7 +18,7 @@ package io.gemini.common.concurrent.disruptor;
 import com.lmax.disruptor.*;
 import com.lmax.disruptor.dsl.Disruptor;
 import com.lmax.disruptor.dsl.ProducerType;
-import io.gemini.common.concurrent.DefaultThreadFactory;
+import io.gemini.common.concurrent.NamedThreadFactory;
 import io.gemini.common.concurrent.RejectedTaskPolicyWithReport;
 import io.gemini.common.util.Pow2;
 import io.gemini.common.util.Requires;
@@ -107,7 +107,7 @@ public class TaskDispatcher implements Dispatcher<Runnable>, Executor {
                     60L,
                     TimeUnit.SECONDS,
                     new SynchronousQueue<>(),
-                    new DefaultThreadFactory(name),
+                    new NamedThreadFactory(name),
                     handler);
         } else {
             reserveExecutor = null;
@@ -145,7 +145,7 @@ public class TaskDispatcher implements Dispatcher<Runnable>, Executor {
         }
 
         if (threadFactory == null) {
-            threadFactory = new DefaultThreadFactory("disruptor.processor");
+            threadFactory = new NamedThreadFactory("disruptor.processor");
         }
         Disruptor<MessageEvent<Runnable>> dr =
                 new Disruptor<>(eventFactory, bufSize, threadFactory, ProducerType.MULTI, waitStrategy);

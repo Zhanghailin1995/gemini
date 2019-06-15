@@ -15,8 +15,11 @@
  */
 package io.gemini.transport.netty.handler;
 
+import io.gemini.common.util.Reflects;
 import io.gemini.transport.TransportProtocol;
 import io.gemini.transport.payload.PayloadHolder;
+import io.gemini.transport.payload.RequestPayload;
+import io.gemini.transport.payload.ResponsePayload;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -77,17 +80,41 @@ public class LowCopyProtocolEncoder extends ChannelOutboundHandlerAdapter {
     }
 
     protected ByteBuf encode(PayloadHolder msg) throws Exception {
-        if (msg instanceof JMessagePayload) {
-            return doEncodeMessage((JMessagePayload) msg);
-        }  else {
-            throw new IllegalArgumentException(msg.getClass().getSimpleName());
+        if (msg instanceof RequestPayload) {
+            return doEncodeRequest((RequestPayload) msg);
+        } else if (msg instanceof ResponsePayload) {
+            return doEncodeResponse((ResponsePayload) msg);
+        } else {
+            throw new IllegalArgumentException(Reflects.simpleClassName(msg));
         }
     }
 
-    private ByteBuf doEncodeMessage(JMessagePayload message) {
-        byte sign = TransportProtocol.toSign(message.serializerCode(), TransportProtocol.REQUEST);
-        long invokeId = message.invokeId();
-        ByteBuf byteBuf = (ByteBuf) message.outputBuf().backingObject();
+    private ByteBuf doEncodeRequest(RequestPayload request) {
+        byte sign = TransportProtocol.toSign(request.serializerCode(), TransportProtocol.REQUEST);
+        long invokeId = request.invokeId();
+        ByteBuf byteBuf = (ByteBuf) request.outputBuf().backingObject();
+        int length = byteBuf.readableBytes();
+
+        byteBuf.markWriterIndex();
+
+        byteBuf.writerIndex(byteBuf.writerIndex() - length);
+
+        byteBuf.writeShort(TransportProtocol.MAGIC)
+                .writeByte(sign)
+                .writeByte(0x00)
+                .writeLong(invokeId)
+                .writeInt(length - TransportProtocol.HEADER_SIZE);
+
+        byteBuf.resetWriterIndex();
+
+        return byteBuf;
+    }
+
+    private ByteBuf doEncodeResponse(ResponsePayload response) {
+        byte sign = TransportProtocol.toSign(response.serializerCode(), TransportProtocol.RESPONSE);
+        byte status = response.status();
+        long invokeId = response.id();
+        ByteBuf byteBuf = (ByteBuf) response.outputBuf().backingObject();
         int length = byteBuf.readableBytes();
 
         // 标记当前写索引
@@ -102,14 +129,14 @@ public class LowCopyProtocolEncoder extends ChannelOutboundHandlerAdapter {
 
         byteBuf.writeShort(TransportProtocol.MAGIC)
                 .writeByte(sign)
-                .writeByte(0x00)
+                .writeByte(status)
                 .writeLong(invokeId)
                 .writeInt(length - TransportProtocol.HEADER_SIZE);
 
-        // 重置回当前写索引
         byteBuf.resetWriterIndex();
 
         return byteBuf;
     }
+
 
 }

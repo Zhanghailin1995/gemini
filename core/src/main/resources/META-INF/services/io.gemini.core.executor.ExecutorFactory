@@ -1,2 +1,0 @@
-io.gemini.core.executor.DisruptorExecutorFactory
-io.gemini.core.executor.ThreadPoolExecutorFactory

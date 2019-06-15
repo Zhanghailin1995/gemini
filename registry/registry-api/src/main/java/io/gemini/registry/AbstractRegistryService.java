@@ -3,7 +3,7 @@ package io.gemini.registry;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import io.gemini.common.concurrent.DefaultThreadFactory;
+import io.gemini.common.concurrent.NamedThreadFactory;
 import io.gemini.common.util.internal.logging.InternalLogger;
 import io.gemini.common.util.internal.logging.InternalLoggerFactory;
 
@@ -27,11 +27,11 @@ public abstract class AbstractRegistryService implements RegistryService {
 
     private final LinkedBlockingQueue<RegisterMeta> queue = new LinkedBlockingQueue<>();
     private final ExecutorService registerExecutor =
-            Executors.newSingleThreadExecutor(new DefaultThreadFactory("register.executor"));
+            Executors.newSingleThreadExecutor(new NamedThreadFactory("register.executor"));
     private final ScheduledExecutorService registerScheduledExecutor =
-            Executors.newSingleThreadScheduledExecutor(new DefaultThreadFactory("register.schedule.executor"));
+            Executors.newSingleThreadScheduledExecutor(new NamedThreadFactory("register.schedule.executor"));
     private final ExecutorService localRegisterWatchExecutor =
-            Executors.newSingleThreadExecutor(new DefaultThreadFactory("local.register.watch.executor"));
+            Executors.newSingleThreadExecutor(new NamedThreadFactory("local.register.watch.executor"));
 
     private final AtomicBoolean shutdown = new AtomicBoolean(false);
 

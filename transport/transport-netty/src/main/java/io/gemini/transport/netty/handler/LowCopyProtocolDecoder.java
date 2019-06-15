@@ -19,6 +19,8 @@ import io.gemini.common.util.Signal;
 import io.gemini.serialization.io.InputBuf;
 import io.gemini.transport.TransportProtocol;
 import io.gemini.transport.exception.IoSignals;
+import io.gemini.transport.payload.RequestPayload;
+import io.gemini.transport.payload.ResponsePayload;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.channel.ChannelHandlerContext;
@@ -102,15 +104,25 @@ public class LowCopyProtocolDecoder extends ReplayingDecoder<LowCopyProtocolDeco
                         break;
                     case TransportProtocol.REQUEST: {
                         int length = checkBodySize(protocol.bodySize());
-                        // low copy
                         ByteBuf bodyByteBuf = in.readRetainedSlice(length);
 
-                        // 传输层不关注消息体，也不关注序列化方式，由业务层决定以及反序列化消息体
-                        JMessagePayload message = new JMessagePayload(protocol.id());
-                        message.timestamp(System.currentTimeMillis());
-                        message.inputBuf(protocol.serializerCode(), new NettyInputBuf(bodyByteBuf));
+                        RequestPayload request = new RequestPayload(protocol.id());
+                        request.timestamp(System.currentTimeMillis());
+                        request.inputBuf(protocol.serializerCode(), new NettyInputBuf(bodyByteBuf));
 
-                        out.add(message);
+                        out.add(request);
+
+                        break;
+                    }
+                    case TransportProtocol.RESPONSE: {
+                        int length = checkBodySize(protocol.bodySize());
+                        ByteBuf bodyByteBuf = in.readRetainedSlice(length);
+
+                        ResponsePayload response = new ResponsePayload(protocol.id());
+                        response.status(protocol.status());
+                        response.inputBuf(protocol.serializerCode(), new NettyInputBuf(bodyByteBuf));
+
+                        out.add(response);
 
                         break;
                     }

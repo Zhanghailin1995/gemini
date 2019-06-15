@@ -15,8 +15,11 @@
  */
 package io.gemini.transport.netty.handler;
 
+import io.gemini.common.util.Reflects;
 import io.gemini.transport.TransportProtocol;
 import io.gemini.transport.payload.PayloadHolder;
+import io.gemini.transport.payload.RequestPayload;
+import io.gemini.transport.payload.ResponsePayload;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -52,10 +55,12 @@ public class ProtocolEncoder extends MessageToByteEncoder<PayloadHolder> {
 
     @Override
     protected void encode(ChannelHandlerContext ctx, PayloadHolder msg, ByteBuf out) throws Exception {
-        if (msg instanceof JMessagePayload) {
-            doEncodeMessage((JMessagePayload) msg, out);
-        }  else {
-            throw new IllegalArgumentException(msg.getClass().getSimpleName());
+        if (msg instanceof RequestPayload) {
+            doEncodeRequest((RequestPayload) msg, out);
+        } else if (msg instanceof ResponsePayload) {
+            doEncodeResponse((ResponsePayload) msg, out);
+        } else {
+            throw new IllegalArgumentException(Reflects.simpleClassName(msg));
         }
     }
 
@@ -68,7 +73,7 @@ public class ProtocolEncoder extends MessageToByteEncoder<PayloadHolder> {
         }
     }
 
-    private void doEncodeMessage(JMessagePayload request, ByteBuf out) {
+    private void doEncodeRequest(RequestPayload request, ByteBuf out) {
         byte sign = TransportProtocol.toSign(request.serializerCode(), TransportProtocol.REQUEST);
         long invokeId = request.invokeId();
         byte[] bytes = request.bytes();
@@ -77,6 +82,21 @@ public class ProtocolEncoder extends MessageToByteEncoder<PayloadHolder> {
         out.writeShort(TransportProtocol.MAGIC)
                 .writeByte(sign)
                 .writeByte(0x00)
+                .writeLong(invokeId)
+                .writeInt(length)
+                .writeBytes(bytes);
+    }
+
+    private void doEncodeResponse(ResponsePayload response, ByteBuf out) {
+        byte sign = TransportProtocol.toSign(response.serializerCode(), TransportProtocol.RESPONSE);
+        byte status = response.status();
+        long invokeId = response.id();
+        byte[] bytes = response.bytes();
+        int length = bytes.length;
+
+        out.writeShort(TransportProtocol.MAGIC)
+                .writeByte(sign)
+                .writeByte(status)
                 .writeLong(invokeId)
                 .writeInt(length)
                 .writeBytes(bytes);

@@ -19,6 +19,8 @@ import io.gemini.common.util.Signal;
 import io.gemini.common.util.SystemPropertyUtil;
 import io.gemini.transport.TransportProtocol;
 import io.gemini.transport.exception.IoSignals;
+import io.gemini.transport.payload.RequestPayload;
+import io.gemini.transport.payload.ResponsePayload;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ReplayingDecoder;
@@ -101,12 +103,24 @@ public class ProtocolDecoder extends ReplayingDecoder<ProtocolDecoder.State> {
                         byte[] bytes = new byte[length];
                         in.readBytes(bytes);
 
-                        JMessagePayload message = new JMessagePayload(protocol.id());
-                        message.timestamp(System.currentTimeMillis());
-                        message.bytes(protocol.serializerCode(), bytes);
-                        message.messageCode(protocol.messageCode());
+                        RequestPayload request = new RequestPayload(protocol.id());
+                        request.timestamp(System.currentTimeMillis());
+                        request.bytes(protocol.serializerCode(), bytes);
 
-                        out.add(message);
+                        out.add(request);
+
+                        break;
+                    }
+                    case TransportProtocol.RESPONSE: {
+                        int length = checkBodySize(protocol.bodySize());
+                        byte[] bytes = new byte[length];
+                        in.readBytes(bytes);
+
+                        ResponsePayload response = new ResponsePayload(protocol.id());
+                        response.status(protocol.status());
+                        response.bytes(protocol.serializerCode(), bytes);
+
+                        out.add(response);
 
                         break;
                     }
