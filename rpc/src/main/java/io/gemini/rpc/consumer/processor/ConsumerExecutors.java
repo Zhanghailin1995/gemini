@@ -13,44 +13,43 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.gemini.rpc.provider.processor;
-
+package io.gemini.rpc.consumer.processor;
 
 import com.google.common.base.Throwables;
 import io.gemini.common.util.ServiceLoader;
 import io.gemini.common.util.SystemPropertyUtil;
 import io.gemini.common.util.internal.logging.InternalLogger;
 import io.gemini.common.util.internal.logging.InternalLoggerFactory;
+import io.gemini.rpc.executor.CallerRunsExecutorFactory;
 import io.gemini.rpc.executor.CloseableExecutor;
 import io.gemini.rpc.executor.ExecutorFactory;
-import io.gemini.rpc.executor.ThreadPoolExecutorFactory;
 
 /**
  * jupiter
- * org.jupiter.rpc.provider.processor
+ * org.jupiter.rpc.consumer.processor
  *
  * @author jiachun.fjc
  */
-public class ProviderExecutors {
+public class ConsumerExecutors {
 
-    private static final InternalLogger logger = InternalLoggerFactory.getInstance(ProviderExecutors.class);
+    private static final InternalLogger logger = InternalLoggerFactory.getInstance(ConsumerExecutors.class);
 
     private static final CloseableExecutor executor;
 
     static {
-        String factoryName = SystemPropertyUtil.get("io.gemini.executor.factory.provider.factory_name", "threadPool");
+        String factoryName = SystemPropertyUtil.get("io.gemini.executor.factory.consumer.factory_name", "callerRuns");
         ExecutorFactory factory;
         try {
-            factory = (ExecutorFactory) ServiceLoader.load(ProviderExecutorFactory.class)
+            factory = (ExecutorFactory) ServiceLoader.load(ConsumerExecutorFactory.class)
                     .find(factoryName);
         } catch (Throwable t) {
-            logger.warn("Failed to load provider's executor factory [{}], cause: {}, " +
-                    "[ThreadPoolExecutorFactory] will be used as default.", factoryName, Throwables.getStackTraceAsString(t));
+            logger.warn("Failed to load consumer's executor factory [{}], cause: {}, " +
+                            "[CallerRunsExecutorFactory] will be used as default.", factoryName, Throwables.getStackTraceAsString(t));
 
-            factory = new ThreadPoolExecutorFactory();
+            factory = new CallerRunsExecutorFactory();
         }
 
-        executor = factory.newExecutor(ExecutorFactory.Target.PROVIDER, "gemini-provider-processor");
+        executor = factory.newExecutor(ExecutorFactory.Target.CONSUMER, "gemini-consumer-processor");
     }
 
     public static CloseableExecutor executor() {
