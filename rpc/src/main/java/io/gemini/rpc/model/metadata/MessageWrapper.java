@@ -19,7 +19,7 @@ public class MessageWrapper implements Serializable {
     private static final long serialVersionUID = 1009813828866652852L;
 
     public static final boolean ALLOW_NULL_ARRAY_ARG =
-            SystemPropertyUtil.getBoolean("io.gemini.message.args.allow_null_array_arg", false);
+            SystemPropertyUtil.getBoolean("gemini.message.args.allow_null_array_arg", false);
 
     private String appName;                 // 应用名称
     private final ServiceMetadata metadata; // 目标服务元数据

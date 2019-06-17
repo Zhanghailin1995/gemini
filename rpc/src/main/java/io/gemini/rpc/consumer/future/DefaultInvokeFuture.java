@@ -39,9 +39,9 @@ public class DefaultInvokeFuture<V> extends CompletableFuture<V> implements Invo
     private static final long DEFAULT_TIMEOUT_NANOSECONDS = TimeUnit.MILLISECONDS.toNanos(Constants.DEFAULT_TIMEOUT);
 
     private static final int FUTURES_CONTAINER_INITIAL_CAPACITY =
-            SystemPropertyUtil.getInt("io.gemini.rpc.invoke.futures_container_initial_capacity", 1024);
+            SystemPropertyUtil.getInt("gemini.rpc.invoke.futures_container_initial_capacity", 1024);
     private static final long TIMEOUT_SCANNER_INTERVAL_MILLIS =
-            SystemPropertyUtil.getLong("io.gemini.rpc.invoke.timeout_scanner_interval_millis", 50);
+            SystemPropertyUtil.getLong("gemini.rpc.invoke.timeout_scanner_interval_millis", 50);
 
     private static final ConcurrentMap<Long, DefaultInvokeFuture<?>> roundFutures =
             MapUtils.newConcurrentMapLong(FUTURES_CONTAINER_INITIAL_CAPACITY);

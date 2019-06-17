@@ -1,7 +1,7 @@
 package io.gemini.transport.netty;
 
-import com.google.common.collect.Maps;
 import io.gemini.common.contants.Constants;
+import io.gemini.common.util.MapUtils;
 import io.gemini.common.util.Requires;
 import io.gemini.common.util.internal.logging.InternalLogger;
 import io.gemini.common.util.internal.logging.InternalLoggerFactory;
@@ -117,7 +117,7 @@ public abstract class NettyConnector implements Connector<Connection> {
     }
 
     @Override
-    public boolean addChannelGroup(Directory directory, ChanGroup group) {
+    public boolean  addChannelGroup(Directory directory, ChanGroup group) {
         CopyOnWriteGroupList groups = directory(directory);
         boolean added = groups.addIfAbsent(group);
         if (added) {

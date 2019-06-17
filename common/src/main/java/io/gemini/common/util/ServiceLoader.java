@@ -284,6 +284,6 @@ public class ServiceLoader<S> implements Iterable<S> {
      */
     @Override
     public String toString() {
-        return "io.gemini.common.util.ServiceLoader[" + service.getName() + "]";
+        return "gemini.common.util.ServiceLoader[" + service.getName() + "]";
     }
 }

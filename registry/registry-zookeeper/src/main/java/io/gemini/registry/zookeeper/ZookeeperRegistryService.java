@@ -2,18 +2,23 @@ package io.gemini.registry.zookeeper;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
+import io.gemini.common.util.MapUtils;
 import io.gemini.common.util.NetUtil;
 import io.gemini.common.util.SpiMetadata;
 import io.gemini.common.util.SystemPropertyUtil;
 import io.gemini.common.util.internal.logging.InternalLogger;
 import io.gemini.common.util.internal.logging.InternalLoggerFactory;
 import io.gemini.registry.AbstractRegistryService;
+import io.gemini.registry.NotifyListener;
 import io.gemini.registry.RegisterMeta;
+import io.gemini.registry.RegisterMeta.Address;
+import io.netty.util.internal.ConcurrentSet;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.framework.api.BackgroundCallback;
 import org.apache.curator.framework.api.CuratorEvent;
+import org.apache.curator.framework.recipes.cache.PathChildrenCache;
 import org.apache.curator.framework.state.ConnectionState;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.apache.zookeeper.CreateMode;
@@ -22,6 +27,7 @@ import org.apache.zookeeper.KeeperException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 import static io.gemini.common.util.Requires.requireNotNull;
@@ -40,18 +46,20 @@ public class ZookeeperRegistryService extends AbstractRegistryService {
     // 没有实际意义, 不要在意它
     private static final AtomicLong sequence = new AtomicLong(0);
 
-    private final String address = SystemPropertyUtil.get("io.gemini.local.address", NetUtil.getLocalAddress());
+    private final String address = SystemPropertyUtil.get("gemini.local.address", NetUtil.getLocalAddress());
 
-    private final int sessionTimeoutMs = SystemPropertyUtil.getInt("io.gemini.registry.zookeeper.sessionTimeoutMs", 60 * 1000);
-    private final int connectionTimeoutMs = SystemPropertyUtil.getInt("io.gemini.registry.zookeeper.connectionTimeoutMs", 15 * 1000);
+    private final int sessionTimeoutMs = SystemPropertyUtil.getInt("gemini.registry.zookeeper.sessionTimeoutMs", 60 * 1000);
+    private final int connectionTimeoutMs = SystemPropertyUtil.getInt("gemini.registry.zookeeper.connectionTimeoutMs", 15 * 1000);
 
+    private final ConcurrentMap<RegisterMeta.ServiceMeta, PathChildrenCache> pathChildrenCaches = MapUtils.newConcurrentMap();
     // 指定节点都提供了哪些服务
+    private final ConcurrentMap<Address, ConcurrentSet<RegisterMeta.ServiceMeta>> serviceMetaMap = MapUtils.newConcurrentMap();
 
     private CuratorFramework configClient;
 
     @Override
     public Collection<RegisterMeta> lookup(RegisterMeta.ServiceMeta serviceMeta) {
-        String directory = String.format("/gemini/server/%s/%s/%s",
+        String directory = String.format("/gemini/provider/%s/%s/%s",
                 serviceMeta.getGroup(),
                 serviceMeta.getServiceProviderName(),
                 serviceMeta.getVersion());
@@ -71,13 +79,70 @@ public class ZookeeperRegistryService extends AbstractRegistryService {
     }
 
     @Override
+    protected void doSubscribe(final RegisterMeta.ServiceMeta serviceMeta) {
+        PathChildrenCache childrenCache = pathChildrenCaches.get(serviceMeta);
+        if (childrenCache == null) {
+            String directory = String.format("/jupiter/provider/%s/%s/%s",
+                    serviceMeta.getGroup(),
+                    serviceMeta.getServiceProviderName(),
+                    serviceMeta.getVersion());
+            PathChildrenCache newChildrenCache = new PathChildrenCache(configClient, directory, false);
+            childrenCache = pathChildrenCaches.putIfAbsent(serviceMeta, newChildrenCache);
+            if (childrenCache == null) {
+                childrenCache = newChildrenCache;
+                childrenCache.getListenable().addListener((client, event) -> {
+                    logger.info("Child event: {}", event);
+
+                    switch (event.getType()) {
+                        case CHILD_ADDED: {
+                            RegisterMeta registerMeta = parseRegisterMeta(event.getData().getPath());
+                            Address address = registerMeta.getAddress();
+                            RegisterMeta.ServiceMeta serviceMeta1 = registerMeta.getServiceMeta();
+                            ConcurrentSet<RegisterMeta.ServiceMeta> serviceMetaSet = getServiceMeta(address);
+
+                            serviceMetaSet.add(serviceMeta1);
+                            ZookeeperRegistryService.super.notify(
+                                    serviceMeta1,
+                                    NotifyListener.NotifyEvent.CHILD_ADDED,
+                                    sequence.incrementAndGet(),
+                                    registerMeta);
+
+                            break;
+                        }
+                        case CHILD_REMOVED: {
+                            RegisterMeta registerMeta = parseRegisterMeta(event.getData().getPath());
+                            Address address = registerMeta.getAddress();
+                            RegisterMeta.ServiceMeta serviceMeta1 = registerMeta.getServiceMeta();
+                            ConcurrentSet<RegisterMeta.ServiceMeta> serviceMetaSet = getServiceMeta(address);
+
+                            serviceMetaSet.remove(serviceMeta1);
+                            ZookeeperRegistryService.super.notify(
+                                    serviceMeta1,
+                                    NotifyListener.NotifyEvent.CHILD_REMOVED,
+                                    sequence.incrementAndGet(),
+                                    registerMeta);
+
+                            if (serviceMetaSet.isEmpty()) {
+                                logger.info("Offline notify: {}.", address);
+
+                                ZookeeperRegistryService.super.offline(address);
+                            }
+                            break;
+                        }
+                    }
+                });
+            }
+        }
+    }
+
+    @Override
     public void destroy() {
         configClient.close();
     }
 
     @Override
     protected void doRegister(final RegisterMeta meta) {
-        String directory = String.format("/gemini/server/%s/%s/%s",
+        String directory = String.format("/gemini/provider/%s/%s/%s",
                 meta.getGroup(),
                 meta.getServiceProviderName(),
                 meta.getVersion());
@@ -232,5 +297,17 @@ public class ZookeeperRegistryService extends AbstractRegistryService {
         meta.setConnCount(Integer.parseInt(array_1[3]));
 
         return meta;
+    }
+
+    private ConcurrentSet<RegisterMeta.ServiceMeta> getServiceMeta(Address address) {
+        ConcurrentSet<RegisterMeta.ServiceMeta> serviceMetaSet = serviceMetaMap.get(address);
+        if (serviceMetaSet == null) {
+            ConcurrentSet<RegisterMeta.ServiceMeta> newServiceMetaSet = new ConcurrentSet<>();
+            serviceMetaSet = serviceMetaMap.putIfAbsent(address, newServiceMetaSet);
+            if (serviceMetaSet == null) {
+                serviceMetaSet = newServiceMetaSet;
+            }
+        }
+        return serviceMetaSet;
     }
 }

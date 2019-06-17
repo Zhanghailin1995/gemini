@@ -34,17 +34,17 @@ public interface ExecutorFactory extends ProviderExecutorFactory {
         PROVIDER
     }
 
-    String CONSUMER_EXECUTOR_CORE_WORKERS           = "io.gemini.executor.factory.consumer.core.workers";
-    String PROVIDER_EXECUTOR_CORE_WORKERS           = "io.gemini.executor.factory.provider.core.workers";
-    String CONSUMER_EXECUTOR_MAX_WORKERS            = "io.gemini.executor.factory.consumer.max.workers";
-    String PROVIDER_EXECUTOR_MAX_WORKERS            = "io.gemini.executor.factory.provider.max.workers";
-    String CONSUMER_EXECUTOR_QUEUE_TYPE             = "io.gemini.executor.factory.consumer.queue.type";
-    String PROVIDER_EXECUTOR_QUEUE_TYPE             = "io.gemini.executor.factory.provider.queue.type";
-    String CONSUMER_EXECUTOR_QUEUE_CAPACITY         = "io.gemini.executor.factory.consumer.queue.capacity";
-    String PROVIDER_EXECUTOR_QUEUE_CAPACITY         = "io.gemini.executor.factory.provider.queue.capacity";
-    String CONSUMER_DISRUPTOR_WAIT_STRATEGY_TYPE    = "io.gemini.executor.factory.consumer.disruptor.wait.strategy.type";
-    String PROVIDER_DISRUPTOR_WAIT_STRATEGY_TYPE    = "io.gemini.executor.factory.provider.disruptor.wait.strategy.type";
-    String CONSUMER_THREAD_POOL_REJECTED_HANDLER    = "io.gemini.executor.factory.consumer.thread.pool.rejected.handler";
-    String PROVIDER_THREAD_POOL_REJECTED_HANDLER    = "io.gemini.executor.factory.provider.thread.pool.rejected.handler";
-    String EXECUTOR_AFFINITY_THREAD                 = "io.gemini.executor.factory.affinity.thread";
+    String CONSUMER_EXECUTOR_CORE_WORKERS           = "gemini.executor.factory.consumer.core.workers";
+    String PROVIDER_EXECUTOR_CORE_WORKERS           = "gemini.executor.factory.provider.core.workers";
+    String CONSUMER_EXECUTOR_MAX_WORKERS            = "gemini.executor.factory.consumer.max.workers";
+    String PROVIDER_EXECUTOR_MAX_WORKERS            = "gemini.executor.factory.provider.max.workers";
+    String CONSUMER_EXECUTOR_QUEUE_TYPE             = "gemini.executor.factory.consumer.queue.type";
+    String PROVIDER_EXECUTOR_QUEUE_TYPE             = "gemini.executor.factory.provider.queue.type";
+    String CONSUMER_EXECUTOR_QUEUE_CAPACITY         = "gemini.executor.factory.consumer.queue.capacity";
+    String PROVIDER_EXECUTOR_QUEUE_CAPACITY         = "gemini.executor.factory.provider.queue.capacity";
+    String CONSUMER_DISRUPTOR_WAIT_STRATEGY_TYPE    = "gemini.executor.factory.consumer.disruptor.wait.strategy.type";
+    String PROVIDER_DISRUPTOR_WAIT_STRATEGY_TYPE    = "gemini.executor.factory.provider.disruptor.wait.strategy.type";
+    String CONSUMER_THREAD_POOL_REJECTED_HANDLER    = "gemini.executor.factory.consumer.thread.pool.rejected.handler";
+    String PROVIDER_THREAD_POOL_REJECTED_HANDLER    = "gemini.executor.factory.provider.thread.pool.rejected.handler";
+    String EXECUTOR_AFFINITY_THREAD                 = "gemini.executor.factory.affinity.thread";
 }

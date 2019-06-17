@@ -38,7 +38,7 @@ public class ProviderExecutors {
     private static final CloseableExecutor executor;
 
     static {
-        String factoryName = SystemPropertyUtil.get("io.gemini.executor.factory.provider.factory_name", "threadPool");
+        String factoryName = SystemPropertyUtil.get("gemini.executor.factory.provider.factory_name", "threadPool");
         ExecutorFactory factory;
         try {
             factory = (ExecutorFactory) ServiceLoader.load(ProviderExecutorFactory.class)

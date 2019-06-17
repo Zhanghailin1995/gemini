@@ -37,7 +37,7 @@ public class ConsumerExecutors {
     private static final CloseableExecutor executor;
 
     static {
-        String factoryName = SystemPropertyUtil.get("io.gemini.executor.factory.consumer.factory_name", "callerRuns");
+        String factoryName = SystemPropertyUtil.get("gemini.executor.factory.consumer.factory_name", "callerRuns");
         ExecutorFactory factory;
         try {
             factory = (ExecutorFactory) ServiceLoader.load(ConsumerExecutorFactory.class)

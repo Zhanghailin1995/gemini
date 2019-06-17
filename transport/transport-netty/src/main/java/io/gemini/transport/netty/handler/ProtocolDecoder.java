@@ -64,7 +64,7 @@ public class ProtocolDecoder extends ReplayingDecoder<ProtocolDecoder.State> {
      * Be aware that CompositeByteBuf use a more complex indexing implementation so depending on your use-case
      * and the decoder implementation this may be slower then just use the {@link #MERGE_CUMULATOR}.
      */
-    private static final boolean USE_COMPOSITE_BUF = SystemPropertyUtil.getBoolean("io.gemini.decoder.composite.buf", false);
+    private static final boolean USE_COMPOSITE_BUF = SystemPropertyUtil.getBoolean("gemini.decoder.composite.buf", false);
 
     public ProtocolDecoder() {
         super(State.MAGIC);

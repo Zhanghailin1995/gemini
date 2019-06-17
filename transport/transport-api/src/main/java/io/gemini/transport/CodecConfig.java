@@ -26,7 +26,7 @@ import io.gemini.common.util.SystemPropertyUtil;
 public final class CodecConfig {
 
     private static final boolean CODEC_LOW_COPY =
-            SystemPropertyUtil.getBoolean("io.gemini.transport.codec.low_copy", false);
+            SystemPropertyUtil.getBoolean("gemini.transport.codec.low_copy", false);
 
     public static boolean isCodecLowCopy() {
         return CODEC_LOW_COPY;

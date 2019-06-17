@@ -16,13 +16,9 @@
 package io.gemini.transport.netty.channel;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import io.gemini.common.atomic.AtomicUpdater;
 import io.gemini.common.contants.Constants;
-import io.gemini.common.util.IntSequence;
-import io.gemini.common.util.Requires;
-import io.gemini.common.util.SystemPropertyUtil;
-import io.gemini.common.util.ThrowUtil;
+import io.gemini.common.util.*;
 import io.gemini.transport.Directory;
 import io.gemini.transport.UnresolvedAddress;
 import io.gemini.transport.channel.Chan;
@@ -50,7 +46,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class NettyChanGroup implements ChanGroup {
 
     private static long LOSS_INTERVAL = SystemPropertyUtil
-            .getLong("jupiter.io.channel.group.loss.interval.millis", TimeUnit.MINUTES.toMillis(5));
+            .getLong("gemini.io.channel.group.loss.interval.millis", TimeUnit.MINUTES.toMillis(5));
 
     private static int DEFAULT_SEQUENCE_STEP = (Constants.AVAILABLE_PROCESSORS << 3) + 1;
 

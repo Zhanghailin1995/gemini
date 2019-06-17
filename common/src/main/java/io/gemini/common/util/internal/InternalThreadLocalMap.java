@@ -65,9 +65,9 @@ public final class InternalThreadLocalMap extends RhsPadding {
             UnsafeUpdater.newReferenceFieldUpdater(StringBuilder.class.getSuperclass(), "value");
 
     private static final int DEFAULT_STRING_BUILDER_MAX_CAPACITY =
-            SystemPropertyUtil.getInt("io.gemini.internal.thread.local.string_builder_max_capacity", 1024 << 6);
+            SystemPropertyUtil.getInt("gemini.internal.thread.local.string_builder_max_capacity", 1024 << 6);
     private static final int DEFAULT_STRING_BUILDER_INITIAL_CAPACITY =
-            SystemPropertyUtil.getInt("io.gemini.internal.thread.local.string_builder_initial_capacity", 512);
+            SystemPropertyUtil.getInt("gemini.internal.thread.local.string_builder_initial_capacity", 512);
 
     private static final ThreadLocal<InternalThreadLocalMap> slowThreadLocalMap = new ThreadLocal<>();
     private static final AtomicInteger nextIndex = new AtomicInteger();
