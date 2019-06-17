@@ -43,7 +43,7 @@ public abstract class NettyConnector implements Connector<Connection> {
     protected final Transporter.Protocol protocol;
     protected final HashedWheelTimer timer = new HashedWheelTimer(new DefaultThreadFactory("connector.timer", true));
 
-    private final ConcurrentMap<UnresolvedAddress, ChanGroup> addressGroups = Maps.newConcurrentMap();
+    private final ConcurrentMap<UnresolvedAddress, ChanGroup> addressGroups = MapUtils.newConcurrentMap();
     private final DirectoryChanGroup directoryGroup = new DirectoryChanGroup();
     private final ConnectionManager connectionManager = new ConnectionManager();
 

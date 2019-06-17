@@ -70,7 +70,7 @@ public class NettyChanGroup implements ChanGroup {
 
     private final IntSequence sequence = new IntSequence(DEFAULT_SEQUENCE_STEP);
 
-    private final ConcurrentMap<String, Integer> weights = Maps.newConcurrentMap();
+    private final ConcurrentMap<String, Integer> weights = MapUtils.newConcurrentMap();
 
     private final ReentrantLock lock = new ReentrantLock();
     private final Condition notifyCondition = lock.newCondition();

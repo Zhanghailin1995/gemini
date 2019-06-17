@@ -95,7 +95,7 @@ public class MessageWrapper implements Serializable {
 
     public void putAttachment(String key, String value) {
         if (attachments == null) {
-            attachments = Maps.newHashMap();
+            attachments = MapUtils.newHashMap();
         }
         attachments.put(key, value);
     }

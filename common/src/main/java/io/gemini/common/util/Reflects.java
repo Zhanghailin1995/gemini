@@ -15,8 +15,6 @@
  */
 package io.gemini.common.util;
 
-import com.google.common.collect.Maps;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
@@ -36,7 +34,7 @@ public final class Reflects {
     /**
      * Maps primitive {@link Class}es to their corresponding wrapper {@link Class}.
      */
-    private static final Map<Class<?>, Class<?>> primitiveWrapperMap = Maps.newIdentityHashMap();
+    private static final Map<Class<?>, Class<?>> primitiveWrapperMap = MapUtils.newIdentityHashMap();
 
     static {
         primitiveWrapperMap.put(Boolean.TYPE, Boolean.class);
@@ -53,7 +51,7 @@ public final class Reflects {
     /**
      * Maps wrapper {@link Class}es to their corresponding primitive types.
      */
-    private static final Map<Class<?>, Class<?>> wrapperPrimitiveMap = Maps.newIdentityHashMap();
+    private static final Map<Class<?>, Class<?>> wrapperPrimitiveMap = MapUtils.newIdentityHashMap();
 
     static {
         for (Map.Entry<Class<?>, Class<?>> entry : primitiveWrapperMap.entrySet()) {

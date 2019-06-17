@@ -2,7 +2,6 @@ package io.gemini.rpc;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import io.gemini.common.contants.Constants;
 import io.gemini.common.util.*;
 import io.gemini.common.util.internal.logging.InternalLogger;
@@ -378,7 +377,7 @@ public class DefaultServer implements Server {
             // key:     method name
             // value:   pair.first:  方法参数类型(用于根据JLS规则实现方法调用的静态分派)
             //          pair.second: 方法显式声明抛出的异常类型
-            Map<String, List<Pair<Class<?>[], Class<?>[]>>> extensions = Maps.newHashMap();
+            Map<String, List<Pair<Class<?>[], Class<?>[]>>> extensions = MapUtils.newHashMap();
             for (Method method : interfaceClass.getMethods()) {
                 String methodName = method.getName();
                 List<Pair<Class<?>[], Class<?>[]>> list = extensions.computeIfAbsent(methodName, k -> Lists.newArrayList());

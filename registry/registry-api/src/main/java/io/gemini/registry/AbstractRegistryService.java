@@ -36,10 +36,10 @@ public abstract class AbstractRegistryService implements RegistryService {
     private final AtomicBoolean shutdown = new AtomicBoolean(false);
 
     private final ConcurrentMap<RegisterMeta.ServiceMeta, RegisterValue> registries =
-            Maps.newConcurrentMap();
+            MapUtils.newConcurrentMap();
 
     // Provider已发布的注册信息
-    private final ConcurrentMap<RegisterMeta, RegisterState> registerMetaMap = Maps.newConcurrentMap();
+    private final ConcurrentMap<RegisterMeta, RegisterState> registerMetaMap = MapUtils.newConcurrentMap();
 
     public AbstractRegistryService() {
         registerExecutor.execute(() -> {
