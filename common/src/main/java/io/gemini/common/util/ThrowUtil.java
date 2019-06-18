@@ -17,7 +17,7 @@ package io.gemini.common.util;
 
 import io.gemini.common.util.internal.UnsafeReferenceFieldUpdater;
 import io.gemini.common.util.internal.UnsafeUpdater;
-import sun.misc.Unsafe;
+import io.gemini.common.util.internal.UnsafeUtil;
 
 /**
  * jupiter
@@ -34,9 +34,8 @@ public final class ThrowUtil {
      * Raises an exception bypassing compiler checks for checked exceptions.
      */
     public static void throwException(Throwable t) {
-        Unsafe unsafe = UnsafeUtil.getUnsafe();
-        if (unsafe != null) {
-            unsafe.throwException(t);
+        if (UnsafeUtil.hasUnsafe()) {
+            UnsafeUtil.getUnsafeAccessor().throwException(t);
         } else {
             ThrowUtil.throwException0(t);
         }

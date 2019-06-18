@@ -19,6 +19,7 @@ import com.google.common.base.Throwables;
 import io.gemini.common.util.internal.logging.InternalLogger;
 import io.gemini.common.util.internal.logging.InternalLoggerFactory;
 import io.gemini.rpc.Response;
+import io.gemini.rpc.consumer.future.DefaultInvokeFuture;
 import io.gemini.rpc.exception.GeminiSerializationException;
 import io.gemini.rpc.model.metadata.ResultWrapper;
 import io.gemini.serialization.Serializer;
@@ -76,6 +77,6 @@ public class MessageTask implements Runnable {
         }
         _response.result(wrapper);
 
-        //DefaultInvokeFuture.received(channel, _response);
+        DefaultInvokeFuture.received(channel, _response);
     }
 }

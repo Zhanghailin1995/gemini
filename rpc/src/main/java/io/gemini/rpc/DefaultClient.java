@@ -7,6 +7,7 @@ import io.gemini.common.util.Strings;
 import io.gemini.common.util.ThrowUtil;
 import io.gemini.registry.*;
 import io.gemini.rpc.consumer.processor.DefaultConsumerProcessor;
+import io.gemini.rpc.model.metadata.ServiceMetadata;
 import io.gemini.transport.*;
 import io.gemini.transport.channel.ChanGroup;
 
@@ -81,12 +82,19 @@ public class DefaultClient implements Client {
 
     @Override
     public Connector.ConnectionWatcher watchConnections(Class<?> interfaceClass) {
-        return null;
+        return watchConnections(interfaceClass, Constants.DEFAULT_VERSION);
     }
 
     @Override
     public Connector.ConnectionWatcher watchConnections(Class<?> interfaceClass, String version) {
-        return null;
+        Requires.requireNotNull(interfaceClass, "interfaceClass");
+        ServiceProvider annotation = interfaceClass.getAnnotation(ServiceProvider.class);
+        Requires.requireNotNull(annotation, interfaceClass + " is not a ServiceProvider interface");
+        String providerName = annotation.name();
+        providerName = Strings.isNotBlank(providerName) ? providerName : interfaceClass.getName();
+        version = Strings.isNotBlank(version) ? version : Constants.DEFAULT_VERSION;
+
+        return watchConnections(new ServiceMetadata(annotation.group(), providerName, version));
     }
 
     @Override

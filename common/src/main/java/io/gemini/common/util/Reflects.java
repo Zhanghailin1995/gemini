@@ -85,10 +85,10 @@ public final class Reflects {
      * @param args           the arguments used for the method call
      * @return the result of dispatching the method represented by this object on {@code obj} with parameters
      */
-    /*public static Object fastInvoke(Object obj, String methodName, Class<?>[] parameterTypes, Object[] args) {
+    public static Object fastInvoke(Object obj, String methodName, Class<?>[] parameterTypes, Object[] args) {
         FastMethodAccessor accessor = FastMethodAccessor.get(obj.getClass());
         return accessor.invoke(obj, methodName, parameterTypes, args);
-    }*/
+    }
 
     /**
      * Returns a {@code Field} object that reflects the specified declared field
