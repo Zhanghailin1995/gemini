@@ -10,5 +10,5 @@ import java.lang.reflect.Method;
  */
 public interface Invoker {
 
-    Object invoke(Method method,Object[] args);
+    Object invoke(Method method,Object[] args) throws Throwable;
 }

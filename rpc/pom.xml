@@ -29,6 +29,10 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>gemini-registry-api</artifactId>
         </dependency>
+        <dependency>
+            <groupId>net.bytebuddy</groupId>
+            <artifactId>byte-buddy</artifactId>
+        </dependency>
     </dependencies>
 
 
