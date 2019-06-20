@@ -86,7 +86,7 @@ final class WeightSupport {
     static int getWeight(ChanGroup group, Directory directory) {
         int weight = group.getWeight(directory);
         int warmUp = group.getWarmUp();
-        int upTime = (int) (System.currentTimeMillis() - group.timestamp());
+        int upTime = (int) (SystemClock.millisClock().now() - group.timestamp());
 
         if (upTime > 0 && upTime < warmUp) {
             // 对端服务预热中, 计算预热权重

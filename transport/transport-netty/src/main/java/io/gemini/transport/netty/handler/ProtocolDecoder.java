@@ -104,7 +104,7 @@ public class ProtocolDecoder extends ReplayingDecoder<ProtocolDecoder.State> {
                         in.readBytes(bytes);
 
                         RequestPayload request = new RequestPayload(protocol.id());
-                        request.timestamp(System.currentTimeMillis());
+                        request.timestamp(SystemClock.millisClock().now());
                         request.bytes(protocol.serializerCode(), bytes);
 
                         out.add(request);

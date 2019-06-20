@@ -117,7 +117,7 @@ public abstract class AbstractDispatcher implements Dispatcher {
 
             // to the deadline (no available channel), the time exceeded the predetermined limit
             long deadline = group.deadlineMillis();
-            if (deadline > 0 && System.currentTimeMillis() > deadline) {
+            if (deadline > 0 && SystemClock.millisClock().now() > deadline) {
                 boolean removed = groups.remove(group);
                 if (removed) {
                     if (logger.isWarnEnabled()) {

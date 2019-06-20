@@ -78,7 +78,7 @@ public class NettyChanGroup implements ChanGroup {
 
     private volatile int capacity = Integer.MAX_VALUE;
     private volatile int warmUp = Constants.DEFAULT_WARM_UP; // warm-up time
-    private volatile long timestamp = System.currentTimeMillis();
+    private volatile long timestamp = SystemClock.millisClock().now();
     private volatile long deadlineMillis = -1;
 
     public NettyChanGroup(UnresolvedAddress address) {
@@ -127,7 +127,7 @@ public class NettyChanGroup implements ChanGroup {
     public boolean add(Chan channel) {
         boolean added = channel instanceof NettyChan && channels.add((NettyChan) channel);
         if (added) {
-            timestamp = System.currentTimeMillis(); // reset timestamp
+            timestamp = SystemClock.millisClock().now(); // reset timestamp
 
             ((NettyChan) channel).channel().closeFuture().addListener(remover);
             deadlineMillis = -1;
@@ -151,10 +151,10 @@ public class NettyChanGroup implements ChanGroup {
     public boolean remove(Chan channel) {
         boolean removed = channel instanceof NettyChan && channels.remove(channel);
         if (removed) {
-            timestamp = System.currentTimeMillis(); // reset timestamp
+            timestamp = SystemClock.millisClock().now(); // reset timestamp
 
             if (channels.isEmpty()) {
-                deadlineMillis = System.currentTimeMillis() + LOSS_INTERVAL;
+                deadlineMillis = SystemClock.millisClock().now() + LOSS_INTERVAL;
             }
         }
         return removed;
@@ -263,7 +263,7 @@ public class NettyChanGroup implements ChanGroup {
 
     @Override
     public boolean isWarmUpComplete() {
-        return System.currentTimeMillis() - timestamp > warmUp;
+        return SystemClock.millisClock().now() - timestamp > warmUp;
     }
 
     @Override

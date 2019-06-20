@@ -218,7 +218,7 @@ public class MessageTask implements RejectedRunnable {
 
             @Override
             public void operationFailure(Chan channel, Throwable cause) throws Exception {
-                long duration = System.currentTimeMillis() - request.timestamp();
+                long duration = SystemClock.millisClock().now() - request.timestamp();
                 logger.error("Response sent failed, duration: {} millis, channel: {}, cause: {}.",
                         duration, channel, cause);
             }

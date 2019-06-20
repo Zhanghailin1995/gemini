@@ -107,7 +107,7 @@ public class LowCopyProtocolDecoder extends ReplayingDecoder<LowCopyProtocolDeco
                         ByteBuf bodyByteBuf = in.readRetainedSlice(length);
 
                         RequestPayload request = new RequestPayload(protocol.id());
-                        request.timestamp(System.currentTimeMillis());
+                        request.timestamp(SystemClock.millisClock().now());
                         request.inputBuf(protocol.serializerCode(), new NettyInputBuf(bodyByteBuf));
 
                         out.add(request);
