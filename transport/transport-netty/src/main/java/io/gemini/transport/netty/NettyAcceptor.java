@@ -170,7 +170,9 @@ public abstract class NettyAcceptor implements Acceptor {
         return waterMark;
     }
 
-    protected abstract void setProcessor(ProviderProcessor processor);
+    protected void setProcessor(ProviderProcessor processor) {
+        // default do nothing
+    }
 
     /**
      * Sets the percentage of the desired amount of time spent for I/O in the child event loops.

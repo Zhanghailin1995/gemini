@@ -47,7 +47,7 @@ public interface RegistryServer {
             Class<RegistryServer> cls;
             try {
                 cls = (Class<RegistryServer>) Class.forName(
-                        SystemPropertyUtil.get("jupiter.registry.default", "org.jupiter.registry.DefaultRegistryServer"));
+                        SystemPropertyUtil.get("jupiter.registry.default", "io.gemini.registry.DefaultRegistryServer"));
             } catch (ClassNotFoundException e) {
                 cls = null;
             }
