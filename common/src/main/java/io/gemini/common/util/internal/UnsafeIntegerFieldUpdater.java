@@ -25,7 +25,7 @@ import java.lang.reflect.Field;
  *
  * @author jiachun.fjc
  */
-public class UnsafeIntegerFieldUpdater<U> {
+public class UnsafeIntegerFieldUpdater<U> implements IntegerFieldUpdater<U>{
     private final long offset;
     private final Unsafe unsafe;
 

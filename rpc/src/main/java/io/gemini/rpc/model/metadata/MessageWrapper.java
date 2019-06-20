@@ -1,6 +1,6 @@
 package io.gemini.rpc.model.metadata;
 
-import com.google.common.collect.Maps;
+import io.gemini.common.util.MapUtils;
 import io.gemini.common.util.SystemPropertyUtil;
 import io.gemini.serialization.ArrayElement;
 

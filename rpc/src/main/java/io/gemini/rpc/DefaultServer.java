@@ -377,6 +377,8 @@ public class DefaultServer implements Server {
             // key:     method name
             // value:   pair.first:  方法参数类型(用于根据JLS规则实现方法调用的静态分派)
             //          pair.second: 方法显式声明抛出的异常类型
+            // 似乎不支持方法重载? 支持的，是我搞错了.
+            // 如果有重载方法,value list 的size就会大于1 {key="io.gemini.service.UserService",value=[<paramTypeCls1,ExceptionCls1>,<paramTypeCls2,ExceptionCls2>]}
             Map<String, List<Pair<Class<?>[], Class<?>[]>>> extensions = MapUtils.newHashMap();
             for (Method method : interfaceClass.getMethods()) {
                 String methodName = method.getName();

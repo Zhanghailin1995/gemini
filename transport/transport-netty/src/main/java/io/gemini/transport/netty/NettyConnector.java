@@ -213,7 +213,9 @@ public abstract class NettyConnector implements Connector<Connection> {
      * Sets consumer's processor.
      */
     @SuppressWarnings("unused")
-    protected abstract void setProcessor(ConsumerProcessor processor);
+    protected void setProcessor(ConsumerProcessor processor) {
+        // default do nothing
+    }
 
     /**
      * Create a WriteBufferWaterMark is used to set low water mark and high water mark for the write buffer.

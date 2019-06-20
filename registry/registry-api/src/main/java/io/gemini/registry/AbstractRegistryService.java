@@ -283,6 +283,10 @@ public abstract class AbstractRegistryService implements RegistryService {
 
     protected abstract void doCheckRegisterNodeStatus();
 
+    protected ConcurrentSet<RegisterMeta.ServiceMeta> getSubscribeSet() {
+        return subscribeSet;
+    }
+
     protected ConcurrentMap<RegisterMeta, RegisterState> getRegisterMetaMap() {
         return registerMetaMap;
     }

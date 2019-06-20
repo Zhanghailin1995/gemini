@@ -15,37 +15,37 @@
  */
 package io.gemini.common.util.internal;
 
-import sun.misc.Unsafe;
-
 import java.lang.reflect.Field;
 
 /**
- * jupiter
- * org.jupiter.common.util.internal
  *
  * @author jiachun.fjc
  */
 @SuppressWarnings("unchecked")
-public final class UnsafeReferenceFieldUpdater<U, W> implements ReferenceFieldUpdater<U, W> {
-    private final long offset;
-    private final Unsafe unsafe;
+final class ReflectionReferenceFieldUpdater<U, W> implements ReferenceFieldUpdater<U, W> {
 
-    UnsafeReferenceFieldUpdater(Unsafe unsafe, Class<? super U> tClass, String fieldName) throws NoSuchFieldException {
-        final Field field = tClass.getDeclaredField(fieldName);
-        if (unsafe == null) {
-            throw new NullPointerException("unsafe");
-        }
-        this.unsafe = unsafe;
-        offset = unsafe.objectFieldOffset(field);
+    private final Field field;
+
+    ReflectionReferenceFieldUpdater(Class<? super U> tClass, String fieldName) throws NoSuchFieldException {
+        this.field = tClass.getDeclaredField(fieldName);
+        this.field.setAccessible(true);
     }
 
     @Override
     public void set(U obj, W newValue) {
-        unsafe.putObject(obj, offset, newValue);
+        try {
+            field.set(obj, newValue);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
-    public W get(U obj) {
-        return (W) unsafe.getObject(obj, offset);
+    public W get(final U obj) {
+        try {
+            return (W) field.get(obj);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

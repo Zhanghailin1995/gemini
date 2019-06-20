@@ -9,13 +9,20 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>gemini-registry</artifactId>
-    <packaging>pom</packaging>
-    <modules>
-        <module>registry-api</module>
-        <module>registry-zookeeper</module>
-        <module>registry-default</module>
-    </modules>
+    <artifactId>gemini-flightexec</artifactId>
+    <packaging>jar</packaging>
+
+    <dependencies>
+        <dependency>
+            <groupId>io.gemini</groupId>
+            <artifactId>gemini-common</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.gemini</groupId>
+            <artifactId>gemini-rpc</artifactId>
+        </dependency>
+    </dependencies>
 
 
 </project>
