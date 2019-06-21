@@ -147,6 +147,21 @@ public abstract class AbstractRegistryService implements RegistryService {
         // 有时间研究一下 StampedLock
         for (Map.Entry<RegisterMeta.ServiceMeta, RegisterValue> entry : registries.entrySet()) {
             RegisterValue value = entry.getValue();
+            /**
+             * long stamp = lock.tryOptimisticRead(); //非阻塞获取版本信息
+             * copyVariables2ThreadMemory();//拷贝变量到线程本地堆栈
+             * if(!lock.validate(stamp)){ // 校验
+             *     long stamp = lock.readLock();//获取读锁
+             *     try {
+             *         copyVaraibale2ThreadMemory();//拷贝变量到线程本地堆栈
+             *      } finally {
+             *        lock.unlock(stamp);//释放悲观锁
+             *     }
+             *
+             * }
+             *
+             * useThreadMemoryVariables();//使用线程本地堆栈里面的数据进行操作
+             */
             final StampedLock stampedLock = value.lock;
             long stamp = stampedLock.tryOptimisticRead();
             int optimisticVal = value.metaSet.size();

@@ -15,6 +15,7 @@
         <module>registry-api</module>
         <module>registry-zookeeper</module>
         <module>registry-default</module>
+        <module>registry-nacos</module>
     </modules>
 
 

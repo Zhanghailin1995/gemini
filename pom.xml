@@ -61,6 +61,7 @@
         <objenesis.version>2.1</objenesis.version>
         <curator.version>2.9.1</curator.version>
         <zookeeper.version>3.4.14</zookeeper.version>
+        <nacos.version>1.0.1</nacos.version>
     </properties>
 
     <dependencyManagement>
@@ -106,6 +107,12 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>gemini-registry-zookeeper</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>gemini-registry-nacos</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
@@ -256,6 +263,13 @@
                 <version>${curator.version}</version>
             </dependency>
             <!-- ### zookeeper dependency: end -->
+
+            <!-- ### nacos dependency -->
+            <dependency>
+                <groupId>com.alibaba.nacos</groupId>
+                <artifactId>nacos-client</artifactId>
+                <version>${nacos.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>org.jctools</groupId>

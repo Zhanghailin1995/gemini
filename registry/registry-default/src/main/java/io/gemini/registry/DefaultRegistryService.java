@@ -41,6 +41,7 @@ public class DefaultRegistryService extends AbstractRegistryService {
 
     private static final InternalLogger logger = InternalLoggerFactory.getInstance(DefaultRegistryService.class);
 
+    // 即使是default 基于内存实现的注册中心也是支持多中心分布式的,所以用一个map来存储,key为注册中心地址,value 为注册中心客户端（每个客户端保持一个对注册中心服务端的连接）
     private final ConcurrentMap<UnresolvedAddress, DefaultRegistry> clients = MapUtils.newConcurrentMap();
 
     @Override
@@ -102,6 +103,7 @@ public class DefaultRegistryService extends AbstractRegistryService {
                 if (client == null) {
                     client = newClient;
                     Connection connection = client.connect(address);
+                    // 自动管理连接
                     client.connectionManager().manage(connection);
                 } else {
                     newClient.shutdownGracefully();
