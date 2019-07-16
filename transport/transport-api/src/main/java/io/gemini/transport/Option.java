@@ -158,7 +158,7 @@ public final class Option<T> extends AbstractConstant<Option<T>> {
     public static final Option<Boolean> PREFER_DIRECT = valueOf("PREFER_DIRECT");
 
     /**
-     * Netty的选项, 是否启用pooled buf allocator.不在代码中控制，启动参数中可以添加-Dio.netty.allocator.type
+     * Netty的选项, 是否启用pooled buf allocator.不在代码中控制，启动参数中可以添加-Dio.netty.allocator.type=pooled
      */
     public static final Option<Boolean> USE_POOLED_ALLOCATOR = valueOf("USE_POOLED_ALLOCATOR");
 

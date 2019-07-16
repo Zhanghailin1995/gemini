@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 /**
@@ -63,7 +64,7 @@ public class ServiceLoader<S> implements Iterable<S> {
     public S first() {
         List<S> sortList = sort();
         if (sortList.isEmpty()) {
-            throw fail(service, "could not find any implementation for class " + service.getName());
+            throw fail(service, "could not find any implementation for class");
         }
         return sortList.get(0);
     }
@@ -76,17 +77,15 @@ public class ServiceLoader<S> implements Iterable<S> {
             }
         }
         while (lookupIterator.hasNext()) {
-            Pair<String, Class<S>> e = lookupIterator.next();
-            String name = e.getFirst();
-            Class<S> cls = e.getSecond();
+            Class<S> cls = lookupIterator.next();
             SpiMetadata spi = cls.getAnnotation(SpiMetadata.class);
             if (spi != null && spi.name().equalsIgnoreCase(implName)) {
                 try {
                     S provider = service.cast(cls.newInstance());
-                    providers.put(name, provider);
+                    providers.put(cls.getName(), provider);
                     return provider;
                 } catch (Throwable x) {
-                    throw fail(service, "provider " + name + " could not be instantiated", x);
+                    throw fail(service, "provider " + cls.getName() + " could not be instantiated", x);
                 }
             }
         }
@@ -152,29 +151,16 @@ public class ServiceLoader<S> implements Iterable<S> {
         return lc + 1;
     }
 
-    @SuppressWarnings("all")
     private Iterator<String> parse(Class<?> service, URL url) {
-        InputStream in = null;
-        BufferedReader r = null;
-        ArrayList<String> names = Lists.newArrayList();
-        try {
-            in = url.openStream();
-            r = new BufferedReader(new InputStreamReader(in, "utf-8"));
+        ArrayList<String> names = new ArrayList<>();
+        try (InputStream in = url.openStream();
+             BufferedReader r = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))) {
             int lc = 1;
-            while ((lc = parseLine(service, url, r, lc, names)) >= 0) ;
+            // noinspection StatementWithEmptyBody
+            while ((lc = parseLine(service, url, r, lc, names)) >= 0)
+                ;
         } catch (IOException x) {
             throw fail(service, "error reading configuration file", x);
-        } finally {
-            try {
-                if (r != null) {
-                    r.close();
-                }
-                if (in != null) {
-                    in.close();
-                }
-            } catch (IOException y) {
-                throw fail(service, "error closing configuration file", y);
-            }
         }
         return names.iterator();
     }
@@ -195,15 +181,13 @@ public class ServiceLoader<S> implements Iterable<S> {
                 if (knownProviders.hasNext()) {
                     return knownProviders.next().getValue();
                 }
-                Pair<String, Class<S>> pair = lookupIterator.next();
-                String name = pair.getFirst();
-                Class<S> cls = pair.getSecond();
+                Class<S> cls = lookupIterator.next();
                 try {
                     S provider = service.cast(cls.newInstance());
-                    providers.put(name, provider);
+                    providers.put(cls.getName(), provider);
                     return provider;
                 } catch (Throwable x) {
-                    throw fail(service, "provider " + name + " could not be instantiated", x);
+                    throw fail(service, "provider " + cls.getName() + " could not be instantiated", x);
                 }
             }
 
@@ -214,7 +198,7 @@ public class ServiceLoader<S> implements Iterable<S> {
         };
     }
 
-    private class LazyIterator implements Iterator<Pair<String, Class<S>>> {
+    private class LazyIterator implements Iterator<Class<S>> {
         Class<S> service;
         ClassLoader loader;
         Enumeration<URL> configs = null;
@@ -255,7 +239,7 @@ public class ServiceLoader<S> implements Iterable<S> {
 
         @SuppressWarnings("unchecked")
         @Override
-        public Pair<String, Class<S>> next() {
+        public Class<S> next() {
             if (!hasNext()) {
                 throw new NoSuchElementException();
             }
@@ -270,7 +254,7 @@ public class ServiceLoader<S> implements Iterable<S> {
             if (!service.isAssignableFrom(cls)) {
                 throw fail(service, "provider " + name + " not a subtype");
             }
-            return Pair.of(name, (Class<S>) cls);
+            return (Class<S>) cls;
         }
 
         @Override
