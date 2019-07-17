@@ -15,7 +15,7 @@
  */
 package io.gemini.rpc.loadbalance;
 
-import org.jupiter.common.util.JServiceLoader;
+import io.gemini.common.util.ServiceLoader;
 
 /**
  * jupiter
@@ -45,7 +45,7 @@ public final class LoadBalancerFactory {
     private LoadBalancerFactory() {}
 
     static class ExtSpiFactoryHolder {
-        static final ExtSpiLoadBalancerFactory factory = JServiceLoader.load(ExtSpiLoadBalancerFactory.class)
+        static final ExtSpiLoadBalancerFactory factory = ServiceLoader.load(ExtSpiLoadBalancerFactory.class)
                 .first();
     }
 }

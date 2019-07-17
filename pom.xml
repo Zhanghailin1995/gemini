@@ -15,6 +15,8 @@
         <module>registry</module>
         <module>rpc</module>
         <module>flightexec</module>
+        <module>example</module>
+        <module>all</module>
     </modules>
 
     <name>Gemini</name>
@@ -53,10 +55,8 @@
         <asm.version>6.0</asm.version>
         <bytebuddy.version>1.9.10</bytebuddy.version>
         <netty.version>4.1.36.Final</netty.version>
-        <spring-boot.version>2.1.5.RELEASE</spring-boot.version>
-        <spring-cloud.version>Finchley.SR3</spring-cloud.version>
-        <mybatis-plus-boot-starter.version>3.1.1</mybatis-plus-boot-starter.version>
         <disruptor.version>3.3.11</disruptor.version>
+        <slf4j.version>1.7.5</slf4j.version>
         <protostuff.version>1.6.0</protostuff.version>
         <objenesis.version>2.1</objenesis.version>
         <curator.version>2.9.1</curator.version>
@@ -124,29 +124,13 @@
             </dependency>
             <!-- ### transport impl: end -->
 
-            <!--spring cloud dependency-->
-            <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-dependencies</artifactId>
-                <version>${spring-cloud.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
 
-            <!--spring boot dependency-->
+            <!-- ## optional dependency: begin -->
             <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-dependencies</artifactId>
-                <version>${spring-boot.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-
-            <!-- mybatis -->
-            <dependency>
-                <groupId>com.baomidou</groupId>
-                <artifactId>mybatis-plus-boot-starter</artifactId>
-                <version>${mybatis-plus-boot-starter.version}</version>
+                <!-- scope: provided  -->
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
             </dependency>
 
 
@@ -187,6 +171,24 @@
                 <artifactId>netty-transport-native-kqueue</artifactId>
                 <version>${netty.version}</version>
                 <classifier>osx-x86_64</classifier>
+            </dependency>
+
+            <!-- ## required dependency: begin -->
+            <dependency>
+                <groupId>org.ow2.asm</groupId>
+                <artifactId>asm</artifactId>
+                <version>${asm.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.bytebuddy</groupId>
+                <artifactId>byte-buddy</artifactId>
+                <version>${bytebuddy.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>3.3.2</version>
             </dependency>
 
             <dependency>

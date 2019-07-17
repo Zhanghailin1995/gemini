@@ -15,9 +15,9 @@
  */
 package io.gemini.common.util;
 
-import io.gemini.common.util.internal.UnsafeReferenceFieldUpdater;
-import io.gemini.common.util.internal.UnsafeUpdater;
+import io.gemini.common.util.internal.ReferenceFieldUpdater;
 import io.gemini.common.util.internal.UnsafeUtil;
+import io.gemini.common.util.internal.Updaters;
 
 /**
  * jupiter
@@ -27,8 +27,8 @@ import io.gemini.common.util.internal.UnsafeUtil;
  */
 public final class ThrowUtil {
 
-    private static final UnsafeReferenceFieldUpdater<Throwable, Throwable> causeUpdater =
-            UnsafeUpdater.newReferenceFieldUpdater(Throwable.class, "cause");
+    private static final ReferenceFieldUpdater<Throwable, Throwable> causeUpdater =
+            Updaters.newReferenceFieldUpdater(Throwable.class, "cause");
 
     /**
      * Raises an exception bypassing compiler checks for checked exceptions.

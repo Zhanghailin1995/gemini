@@ -15,6 +15,7 @@
  */
 package io.gemini.rpc.executor;
 
+import io.gemini.rpc.consumer.processor.ConsumerExecutorFactory;
 import io.gemini.rpc.provider.processor.ProviderExecutorFactory;
 
 /**
@@ -25,7 +26,7 @@ import io.gemini.rpc.provider.processor.ProviderExecutorFactory;
  *
  * @author jiachun.fjc
  */
-public interface ExecutorFactory extends ProviderExecutorFactory {
+public interface ExecutorFactory extends ConsumerExecutorFactory, ProviderExecutorFactory {
 
     CloseableExecutor newExecutor(Target target, String name);
 

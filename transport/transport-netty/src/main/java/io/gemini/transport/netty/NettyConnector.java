@@ -63,7 +63,7 @@ public abstract class NettyConnector implements Connector<Connection> {
     }
 
     protected void init() {
-        ThreadFactory workerFactory = workerThreadFactory("jupiter.connector");
+        ThreadFactory workerFactory = workerThreadFactory("gemini.connector");
         worker = initEventLoopGroup(nWorkers, workerFactory);
 
         bootstrap = new Bootstrap().group(worker);

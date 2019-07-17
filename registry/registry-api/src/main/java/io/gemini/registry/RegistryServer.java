@@ -30,7 +30,7 @@ import java.util.List;
  *
  * @author jiachun.fjc
  */
-public interface RegistryServer {
+public interface RegistryServer extends RegistryMonitor {
 
     void startRegistryServer();
 
@@ -47,7 +47,7 @@ public interface RegistryServer {
             Class<RegistryServer> cls;
             try {
                 cls = (Class<RegistryServer>) Class.forName(
-                        SystemPropertyUtil.get("jupiter.registry.default", "io.gemini.registry.DefaultRegistryServer"));
+                        SystemPropertyUtil.get("gemini.registry.default", "io.gemini.registry.DefaultRegistryServer"));
             } catch (ClassNotFoundException e) {
                 cls = null;
             }

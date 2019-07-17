@@ -18,6 +18,7 @@ package io.gemini.rpc.consumer.invoker;
 import io.gemini.common.util.MapUtils;
 import io.gemini.rpc.consumer.cluster.ClusterInvoker;
 import io.gemini.rpc.consumer.cluster.FailfastClusterInvoker;
+import io.gemini.rpc.consumer.cluster.FailoverClusterInvoker;
 import io.gemini.rpc.consumer.dispatcher.Dispatcher;
 import io.gemini.rpc.model.metadata.ClusterStrategyConfig;
 import io.gemini.rpc.model.metadata.MethodSpecialConfig;
@@ -64,7 +65,7 @@ public class ClusterStrategyBridging {
             case FAIL_FAST:
                 return new FailfastClusterInvoker(dispatcher);
             case FAIL_OVER:
-                //return new FailoverClusterInvoker(dispatcher, strategy.getFailoverRetries());
+                return new FailoverClusterInvoker(dispatcher, strategy.getFailoverRetries());
             case FAIL_SAFE:
                 //return new FailsafeClusterInvoker(dispatcher);
             default:

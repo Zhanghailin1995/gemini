@@ -155,7 +155,7 @@ public final class DefaultRegistryServer extends AbstractNettyTcpAcceptor implem
         return boot.bind(localAddress);
     }
 
-    /*@Override
+    @Override
     public List<String> listPublisherHosts() {
         List<RegisterMeta.Address> fromList = registerInfoContext.listPublisherHosts();
 
@@ -190,7 +190,7 @@ public final class DefaultRegistryServer extends AbstractNettyTcpAcceptor implem
         List<RegisterMeta.ServiceMeta> fromList = registerInfoContext.listServicesByAddress(address);
 
         return Lists.transform(fromList, RegisterMeta.ServiceMeta::toString);
-    }*/
+    }
 
     @Override
     public void startRegistryServer() {

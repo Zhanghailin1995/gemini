@@ -17,6 +17,7 @@ package io.gemini.rpc;
 
 import io.gemini.registry.Registry;
 import io.gemini.registry.RegistryService;
+import io.gemini.rpc.flow.control.FlowController;
 import io.gemini.rpc.model.metadata.ServiceWrapper;
 import io.gemini.rpc.provider.ProviderInterceptor;
 import io.gemini.transport.Acceptor;
@@ -80,7 +81,7 @@ public interface Server extends Registry {
         /**
          * 设置一个私有的流量限制器.
          */
-        //ServiceRegistry flowController(FlowController<Request> flowController);
+        ServiceRegistry flowController(FlowController<Request> flowController);
 
         /**
          * 注册服务到本地容器.
@@ -119,12 +120,12 @@ public interface Server extends Registry {
     /**
      * 返回已设置的全局的拦截器.
      */
-    //FlowController<Request> globalFlowController();
+    FlowController<Request> globalFlowController();
 
     /**
      * 设置全局的流量控制器.
      */
-    //void withGlobalFlowController(FlowController<JRequest> flowController);
+    void withGlobalFlowController(FlowController<Request> flowController);
 
     /**
      * 获取服务注册(本地)工具.

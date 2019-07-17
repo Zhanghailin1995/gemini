@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>gemini</artifactId>
+        <groupId>io.gemini</groupId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>gemini-all</artifactId>
+    <packaging>jar</packaging>
+    <name>gemini/All-in-One</name>
+
+    <dependencies>
+        <!-- # gemini module dependency: begin -->
+        <!-- ## required dependency: begin -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>gemini-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>gemini-rpc</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- ### api: begin -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>gemini-registry-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>gemini-serialization-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>gemini-transport-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!-- ### api: end -->
+        <!-- ## required dependency: end -->
+
+        <!-- ## optional dependency: begin -->
+
+        <!-- ### registry impl: begin -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>gemini-registry-default</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>gemini-registry-zookeeper</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!-- ### registry impl: end -->
+
+        <!-- ### serialization impl: begin -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>gemini-serialization-protostuff</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!-- ### serialization impl: end -->
+
+        <!-- ### transport impl: begin -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>gemini-transport-netty</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!-- ### transport impl: end -->
+        <!-- ## optional dependency: end -->
+        <!-- # gemini module dependency: end -->
+
+        <!-- # netty dependency: begin -->
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-buffer</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-codec</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-handler</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-transport</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-transport-native-epoll</artifactId>
+            <classifier>linux-x86_64</classifier>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-transport-native-kqueue</artifactId>
+            <classifier>osx-x86_64</classifier>
+        </dependency>
+        <!-- # netty dependency: end -->
+
+        <!-- # serialization dependency: begin -->
+        <dependency>
+            <groupId>io.protostuff</groupId>
+            <artifactId>protostuff-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.protostuff</groupId>
+            <artifactId>protostuff-runtime</artifactId>
+        </dependency>
+        <!-- # serialization dependency: end -->
+
+        <!-- # common dependency: begin -->
+        <!-- ## required dependency: begin -->
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.bytebuddy</groupId>
+            <artifactId>byte-buddy</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.lmax</groupId>
+            <artifactId>disruptor</artifactId>
+        </dependency>
+        <!-- ## required dependency: end -->
+
+        <!-- ## optional dependency: begin -->
+        <dependency>
+            <!-- scope: provided -->
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <!-- ### zookeeper dependency: begin 只有在依赖 [gemini-registry-zookeeper] 时才会需要它 -->
+        <dependency>
+            <groupId>org.apache.zookeeper</groupId>
+            <artifactId>zookeeper</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.netty</groupId>
+                    <artifactId>netty</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>jline</groupId>
+                    <artifactId>jline</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.curator</groupId>
+            <artifactId>curator-framework</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.curator</groupId>
+            <artifactId>curator-recipes</artifactId>
+        </dependency>
+        <!-- ### zookeeper dependency: end -->
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>2.4.3</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <shadeTestJar>true</shadeTestJar>
+                            <createSourcesJar>true</createSourcesJar>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
+                            </transformers>
+                            <artifactSet>
+                                <includes>
+                                    <include>${project.groupId}:*:*</include>
+                                </includes>
+                            </artifactSet>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- The shadowed source files of this module need to be included explicitly to create a javadoc artifact.-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.9.1</version>
+                <configuration>
+                    <includeDependencySources>true</includeDependencySources>
+                    <dependencySourceIncludes>
+                        <dependencySourceInclude>${project.groupId}:gemini-common</dependencySourceInclude>
+                        <!--<dependencySourceInclude>${project.groupId}:gemini-extension</dependencySourceInclude>
+                        <dependencySourceInclude>${project.groupId}:gemini-flightexec</dependencySourceInclude>
+                        <dependencySourceInclude>${project.groupId}:gemini-monitor</dependencySourceInclude>-->
+                        <dependencySourceInclude>${project.groupId}:gemini-registry</dependencySourceInclude>
+                        <dependencySourceInclude>${project.groupId}:gemini-rpc</dependencySourceInclude>
+                        <dependencySourceInclude>${project.groupId}:gemini-serialization</dependencySourceInclude>
+                        <!--<dependencySourceInclude>${project.groupId}:gemini-spring-support</dependencySourceInclude>-->
+                        <dependencySourceInclude>${project.groupId}:gemini-transport</dependencySourceInclude>
+                    </dependencySourceIncludes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+
+</project>

@@ -21,6 +21,7 @@ import io.gemini.common.util.internal.logging.InternalLogger;
 import io.gemini.common.util.internal.logging.InternalLoggerFactory;
 import io.gemini.rpc.Request;
 import io.gemini.rpc.executor.CloseableExecutor;
+import io.gemini.rpc.flow.control.FlowController;
 import io.gemini.rpc.model.metadata.ResultWrapper;
 import io.gemini.rpc.provider.LookupService;
 import io.gemini.rpc.provider.processor.task.MessageTask;
@@ -40,7 +41,7 @@ import io.gemini.transport.processor.ProviderProcessor;
  *
  * @author jiachun.fjc
  */
-public abstract class DefaultProviderProcessor implements ProviderProcessor, LookupService {
+public abstract class DefaultProviderProcessor implements ProviderProcessor, LookupService, FlowController<Request> {
 
     private static final InternalLogger logger = InternalLoggerFactory.getInstance(DefaultProviderProcessor.class);
 

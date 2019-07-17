@@ -8,6 +8,8 @@ import io.gemini.common.util.internal.logging.InternalLogger;
 import io.gemini.common.util.internal.logging.InternalLoggerFactory;
 import io.gemini.registry.RegisterMeta;
 import io.gemini.registry.RegistryService;
+import io.gemini.rpc.flow.control.ControlResult;
+import io.gemini.rpc.flow.control.FlowController;
 import io.gemini.rpc.model.metadata.ServiceMetadata;
 import io.gemini.rpc.model.metadata.ServiceWrapper;
 import io.gemini.rpc.provider.ProviderInterceptor;
@@ -41,11 +43,14 @@ public class DefaultServer implements Server {
     // 全局拦截器
     private ProviderInterceptor[] globalInterceptors;
 
+    // 全局流量控制
+    private FlowController<Request> globalFlowController;
+
     // IO acceptor
     private Acceptor acceptor;
 
     public DefaultServer() {
-        this(RegistryService.RegistryType.ZOOKEEPER);
+        this(RegistryService.RegistryType.DEFAULT);
     }
 
     public DefaultServer(RegistryService.RegistryType registryType) {
@@ -68,6 +73,15 @@ public class DefaultServer implements Server {
                 public ServiceWrapper lookupService(Directory directory) {
                     return providerContainer.lookupService(directory.directoryString());
                 }
+
+                @Override
+                public ControlResult flowControl(Request request) {
+                    // 全局流量控制
+                    if (globalFlowController == null) {
+                        return ControlResult.ALLOWED;
+                    }
+                    return globalFlowController.flowControl(request);
+                }
             });
         }
         this.acceptor = acceptor;
@@ -85,6 +99,16 @@ public class DefaultServer implements Server {
     }
 
     @Override
+    public FlowController<Request> globalFlowController() {
+        return globalFlowController;
+    }
+
+    @Override
+    public void withGlobalFlowController(FlowController<Request> globalFlowController) {
+        this.globalFlowController = globalFlowController;
+    }
+
+    @Override
     public ServiceRegistry serviceRegistry() {
         return new DefaultServiceRegistry();
     }
@@ -98,6 +122,7 @@ public class DefaultServer implements Server {
     public ServiceWrapper removeService(Directory directory) {
         return providerContainer.removeService(directory.directoryString());
     }
+
 
     @Override
     public List<ServiceWrapper> allRegisteredServices() {
@@ -215,7 +240,7 @@ public class DefaultServer implements Server {
             Map<String, List<Pair<Class<?>[], Class<?>[]>>> extensions,
             int weight,
             Executor executor
-            //,FlowController<Request> flowController
+            ,FlowController<Request> flowController
     ) {
 
         ProviderInterceptor[] allInterceptors = null;
@@ -235,7 +260,7 @@ public class DefaultServer implements Server {
 
         wrapper.setWeight(weight);
         wrapper.setExecutor(executor);
-        //wrapper.setFlowController(flowController);
+        wrapper.setFlowController(flowController);
 
         //group providerName,version 构成了一个确定服务的三元组
 
@@ -254,7 +279,7 @@ public class DefaultServer implements Server {
         private String version;                             // 服务版本号, 通常在接口不兼容时版本号才需要升级
         private int weight;                                 // 权重
         private Executor executor;                          // 该服务私有的线程池
-        //private FlowController<JRequest> flowController;    // 该服务私有的流量控制器
+        private FlowController<Request> flowController;    // 该服务私有的流量控制器
 
         @Override
         public ServiceRegistry provider(Object serviceProvider, ProviderInterceptor... interceptors) {
@@ -299,11 +324,11 @@ public class DefaultServer implements Server {
             return this;
         }
 
-        /*@Override
-        public ServiceRegistry flowController(FlowController<JRequest> flowController) {
+        @Override
+        public ServiceRegistry flowController(FlowController<Request> flowController) {
             this.flowController = flowController;
             return this;
-        }*/
+        }
 
         @Override
         public ServiceWrapper register() {
@@ -395,8 +420,8 @@ public class DefaultServer implements Server {
                     extensions,
                     weight,
                     executor
-                    //,
-                    //flowController
+                    ,
+                    flowController
             );
         }
     }

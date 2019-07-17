@@ -18,9 +18,9 @@ package io.gemini.serialization;
 
 /**
  * This interface provides an abstract view for one or more serializer impl.
- *
+ * <p>
  * SerializerImpl是基于SPI加载的, 会加载所有(Gemini-serialization-XXX), 并可以同时可以支持所有引入的SerializerImpl.
- *
+ * <p>
  * jupiter
  * org.jupiter.serialization
  *
@@ -48,5 +48,9 @@ public abstract class Serializer {
 
     //public abstract <T> T readObject(byte[] bytes, int offset, int length, Class<T> clazz);
 
-    public abstract <T> T readObject(byte[] bytes, Class<T> clazz);
+    public abstract <T> T readObject(byte[] bytes, int offset, int length, Class<T> clazz);
+
+    public <T> T readObject(byte[] bytes, Class<T> clazz) {
+        return readObject(bytes, 0, bytes.length, clazz);
+    }
 }

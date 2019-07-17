@@ -6,10 +6,9 @@ import io.gemini.common.util.*;
 import io.gemini.common.util.internal.logging.InternalLogger;
 import io.gemini.common.util.internal.logging.InternalLoggerFactory;
 import io.gemini.rpc.*;
-import io.gemini.rpc.exception.GeminiBadRequestException;
-import io.gemini.rpc.exception.GeminiRemoteException;
-import io.gemini.rpc.exception.GeminiServerBusyException;
-import io.gemini.rpc.exception.GeminiServiceNotFoundException;
+import io.gemini.rpc.exception.*;
+import io.gemini.rpc.flow.control.ControlResult;
+import io.gemini.rpc.flow.control.FlowController;
 import io.gemini.rpc.model.metadata.MessageWrapper;
 import io.gemini.rpc.model.metadata.ResultWrapper;
 import io.gemini.rpc.model.metadata.ServiceWrapper;
@@ -58,11 +57,11 @@ public class MessageTask implements RejectedRunnable {
         final Request _request = request;
 
         // 全局流量控制
-        /*ControlResult ctrl = _processor.flowControl(_request);
+        ControlResult ctrl = _processor.flowControl(_request);
         if (!ctrl.isAllowed()) {
-            rejected(Status.APP_FLOW_CONTROL, new JupiterFlowControlException(String.valueOf(ctrl)));
+            rejected(Status.APP_FLOW_CONTROL, new GeminiFlowControlException(String.valueOf(ctrl)));
             return;
-        }*/
+        }
         MessageWrapper msg;
         try {
             RequestPayload _requestPayload = _request.payload();
@@ -96,14 +95,14 @@ public class MessageTask implements RejectedRunnable {
         }
 
         // provider私有流量控制
-        /*FlowController<JRequest> childController = service.getFlowController();
+        FlowController<Request> childController = service.getFlowController();
         if (childController != null) {
             ctrl = childController.flowControl(_request);
             if (!ctrl.isAllowed()) {
-                rejected(Status.PROVIDER_FLOW_CONTROL, new JupiterFlowControlException(String.valueOf(ctrl)));
+                rejected(Status.PROVIDER_FLOW_CONTROL, new GeminiFlowControlException(String.valueOf(ctrl)));
                 return;
             }
-        }*/
+        }
 
         // processing
         Executor childExecutor = service.getExecutor();
@@ -262,7 +261,7 @@ public class MessageTask implements RejectedRunnable {
             Pair<Class<?>[], Class<?>[]> bestMatch = Reflects.findMatchingParameterTypesExt(methodExtension, args);
             Class<?>[] parameterTypes = bestMatch.getFirst();
             expectCauseTypes = bestMatch.getSecond();
-
+            // 真正的方法调用，使用了ASM 代码生产，而非反射
             return Reflects.fastInvoke(provider, methodName, parameterTypes, args);
         } catch (Throwable t) {
             invokeCtx.setCauseAndExpectTypes(t, expectCauseTypes);

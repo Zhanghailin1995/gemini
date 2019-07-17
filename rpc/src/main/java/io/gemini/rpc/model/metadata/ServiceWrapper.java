@@ -17,6 +17,8 @@ package io.gemini.rpc.model.metadata;
 
 import io.gemini.common.contants.Constants;
 import io.gemini.common.util.Pair;
+import io.gemini.rpc.Request;
+import io.gemini.rpc.flow.control.FlowController;
 import io.gemini.rpc.provider.ProviderInterceptor;
 
 import java.io.Serializable;
@@ -58,7 +60,7 @@ public class ServiceWrapper implements Serializable {
     // provider私有线程池
     private Executor executor;
     // provider私有流量控制器
-    //private FlowController<Request> flowController;
+    private FlowController<Request> flowController;
 
     public ServiceWrapper(String group,
                           String providerName,
@@ -103,13 +105,13 @@ public class ServiceWrapper implements Serializable {
     }
 
     //TODO add flow controller
-    /*public FlowController<Request> getFlowController() {
+    public FlowController<Request> getFlowController() {
         return flowController;
     }
 
-    public void setFlowController(FlowController<JRequest> flowController) {
+    public void setFlowController(FlowController<Request> flowController) {
         this.flowController = flowController;
-    }*/
+    }
 
     public List<Pair<Class<?>[], Class<?>[]>> getMethodExtension(String methodName) {
         return extensions.get(methodName);
@@ -139,7 +141,7 @@ public class ServiceWrapper implements Serializable {
                 ", extensions=" + extensions +
                 ", weight=" + weight +
                 ", executor=" + executor +
-                //", flowController=" + flowController +
+                ", flowController=" + flowController +
                 '}';
     }
 }

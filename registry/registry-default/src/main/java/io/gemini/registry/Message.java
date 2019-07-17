@@ -86,4 +86,8 @@ public class Message {
                 ", data=" + data +
                 '}';
     }
+
+    public static void main(String[] args) throws IllegalAccessException, InstantiationException {
+        Message.class.newInstance();
+    }
 }
