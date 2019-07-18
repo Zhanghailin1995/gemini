@@ -54,7 +54,7 @@ public class ProtoStuffSerializer extends Serializer {
         //
         // 默认 true, 禁止反序列化时构造方法被调用, 防止有些类的构造方法内有令人惊喜的逻辑
         String always_use_sun_reflection_factory = SystemPropertyUtil
-                .get("jupiter.serializer.protostuff.always_use_sun_reflection_factory", "true");
+                .get("gemini.serializer.protostuff.always_use_sun_reflection_factory", "true");
         SystemPropertyUtil
                 .setProperty("protostuff.runtime.always_use_sun_reflection_factory", always_use_sun_reflection_factory);
 
@@ -62,7 +62,8 @@ public class ProtoStuffSerializer extends Serializer {
         //
         // 默认 false, 不允许数组中的元素为 null
         String allow_null_array_element = SystemPropertyUtil
-                .get("jupiter.serializer.protostuff.allow_null_array_element", "false");
+                .get("gemini.serializer.protostuff.allow_null_array_element", "true");
+        System.out.println(allow_null_array_element);
         SystemPropertyUtil
                 .setProperty("protostuff.runtime.allow_null_array_element", allow_null_array_element);
     }

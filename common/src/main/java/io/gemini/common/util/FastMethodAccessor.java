@@ -16,7 +16,6 @@
 package io.gemini.common.util;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import org.objectweb.asm.*;
 
 import java.lang.ref.WeakReference;
@@ -37,7 +36,7 @@ import static org.objectweb.asm.Opcodes.*;
  */
 public abstract class FastMethodAccessor {
 
-    private static final ConcurrentMap<Class<?>, FastMethodAccessor> fastAccessorCache = Maps.newConcurrentMap();
+    private static final ConcurrentMap<Class<?>, FastMethodAccessor> fastAccessorCache = MapUtils.newConcurrentMap();
 
     private String[] methodNames;
     private Class<?>[][] parameterTypes_s;

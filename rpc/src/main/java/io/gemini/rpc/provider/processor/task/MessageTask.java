@@ -261,6 +261,7 @@ public class MessageTask implements RejectedRunnable {
             Pair<Class<?>[], Class<?>[]> bestMatch = Reflects.findMatchingParameterTypesExt(methodExtension, args);
             Class<?>[] parameterTypes = bestMatch.getFirst();
             expectCauseTypes = bestMatch.getSecond();
+
             // 真正的方法调用，使用了ASM 代码生产，而非反射
             return Reflects.fastInvoke(provider, methodName, parameterTypes, args);
         } catch (Throwable t) {

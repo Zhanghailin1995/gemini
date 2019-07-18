@@ -18,6 +18,7 @@ package io.gemini.common.util;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -87,6 +88,7 @@ public final class Reflects {
      */
     public static Object fastInvoke(Object obj, String methodName, Class<?>[] parameterTypes, Object[] args) {
         FastMethodAccessor accessor = FastMethodAccessor.get(obj.getClass());
+        System.out.println(Arrays.toString(args));
         return accessor.invoke(obj, methodName, parameterTypes, args);
     }
 

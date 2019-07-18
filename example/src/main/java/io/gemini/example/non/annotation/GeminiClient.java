@@ -38,8 +38,8 @@ import java.util.ArrayList;
 public class GeminiClient {
 
     public static void main(String[] args) {
-        SystemPropertyUtil.setProperty("jupiter.message.args.allow_null_array_arg", "true");
-        SystemPropertyUtil.setProperty("jupiter.serializer.protostuff.allow_null_array_element", "true");
+        SystemPropertyUtil.setProperty("gemini.message.args.allow_null_array_arg", "true");
+        SystemPropertyUtil.setProperty("gemini.serializer.protostuff.allow_null_array_element", "true");
         final Client client = new DefaultClient().withConnector(new SimpleNettyTcpConnector());
         // 连接RegistryServer
         client.connectToRegistryServer("127.0.0.1:20001");
@@ -63,16 +63,16 @@ public class GeminiClient {
                 .newProxyInstance();
 
         try {
-            String result = service.sayHello(null, null, null);
+            /*String result = service.sayHello(null, null, null);
             Requires.requireTrue("arg1=null, arg2=null, arg3=null".equals(result));
-            System.out.println(result);
-            result = service.sayHello(null, 1, null);
+            System.out.println(result);*/
+            /*result = service.sayHello(null, 1, null);
             Requires.requireTrue("arg1=null, arg2=1, arg3=null".equals(result));
-            System.out.println(result);
-            result = service.sayHello(null, null, new ArrayList<>());
+            System.out.println(result);*/
+            /*String result = service.sayHello(null, null, new ArrayList<>());
             Requires.requireTrue("arg1=null, arg2=null, arg3=[]".equals(result));
-            System.out.println(result);
-            result = service.sayHello("test", 2, null);
+            System.out.println(result);*/
+            String result = service.sayHello("test", 2, null);
             Requires.requireTrue("arg1=test, arg2=2, arg3=null".equals(result));
             System.out.println(result);
             result = service.sayHello("test", null, new ArrayList<>());
