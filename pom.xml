@@ -54,7 +54,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <asm.version>6.0</asm.version>
         <bytebuddy.version>1.9.10</bytebuddy.version>
-        <netty.version>4.1.36.Final</netty.version>
+        <netty.version>4.1.68.Final</netty.version>
         <disruptor.version>3.3.11</disruptor.version>
         <slf4j.version>1.7.5</slf4j.version>
         <protostuff.version>1.6.0</protostuff.version>
